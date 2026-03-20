@@ -29,7 +29,6 @@ public class TestXRRandom {
 		String alphanumSpecial = XRRandom.stringAlphaNumSpecial(32);
 		String loremIpsum = XRRandom.loremIpsum(2048);
 		
-		
 		//--------------------------------------------
 		// from Collections, Arrays ...
 		
