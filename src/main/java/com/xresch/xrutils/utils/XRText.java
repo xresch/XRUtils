@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.gson.JsonArray;
+import com.xresch.xrutils.cache.SimpleCache;
 
 /**************************************************************************************************************
  * 

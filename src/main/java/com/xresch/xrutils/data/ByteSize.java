@@ -1,4 +1,4 @@
-package com.xresch.xrutils.utils;
+package com.xresch.xrutils.data;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

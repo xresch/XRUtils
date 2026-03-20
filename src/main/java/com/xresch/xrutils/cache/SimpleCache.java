@@ -1,4 +1,4 @@
-package com.xresch.xrutils.utils;
+package com.xresch.xrutils.cache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

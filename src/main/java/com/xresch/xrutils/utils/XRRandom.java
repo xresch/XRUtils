@@ -23,7 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.xresch.xrutils.base.XRUtils;
+import com.xresch.xrutils.base.XR;
 import com.xresch.xrutils.utils.XRTime.XRTimeUnit;
 
 /**************************************************************************************************************
@@ -1078,7 +1078,7 @@ public class XRRandom {
 		
 		//create birthday and age between 18 and 100
 		long birthdayMillis = longInRange(XRTimeUnit.y.offset(null, -100), XRTimeUnit.y.offset(null, -18));
-		String birthday = XRUtils.Time.formatMillis(birthdayMillis, "YYYY-MM-dd");
+		String birthday = XR.Time.formatMillis(birthdayMillis, "YYYY-MM-dd");
 		int age = (int)Math.ceil( XRTimeUnit.y.difference(birthdayMillis, System.currentTimeMillis()) );
 		
 		JsonObject countryData = countryData();

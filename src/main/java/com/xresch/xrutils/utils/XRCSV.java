@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.xresch.xrutils.base.XRUtils;
+import com.xresch.xrutils.base.XR;
 
 import ch.qos.logback.classic.Logger;
 
@@ -258,7 +258,7 @@ public class XRCSV {
 		ArrayList<String> headerArray = splitCSVQuotesAware(separator, header);
 		
 		if(makeFieldsLowercase) {
-			headerArray = XRUtils.Text.arrayToLowercase(headerArray);
+			headerArray = XR.Text.arrayToLowercase(headerArray);
 		}
 		
 		//----------------------------
@@ -433,7 +433,7 @@ public class XRCSV {
 						   )
 						){
 							try {
-								value = XRUtils.JSON.fromJson(valueString);
+								value = XR.JSON.fromJson(valueString);
 							}catch(Throwable e) {
 								logger.error("JSON from CSV: error while parsing: "+e.getMessage(), e);
 							}

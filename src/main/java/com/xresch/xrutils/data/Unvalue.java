@@ -1,4 +1,4 @@
-package com.xresch.xrutils.utils;
+package com.xresch.xrutils.data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.xresch.xrutils.base.XRUtils;
-import com.xresch.xrutils.base.XRUtils.JSON;
-import com.xresch.xrutils.base.XRUtils.Text;
+import com.xresch.xrutils.base.XR;
+import com.xresch.xrutils.base.XR.JSON;
+import com.xresch.xrutils.base.XR.Text;
 
 /**************************************************************************************************************
  * A Value class that allows to bypass type safety that like to get into the way of programmers.
- * Called an "Unvalue" as some programmers would call it a sacrilegous and blasphemic perversion of far-spread
+ * Also called an "Unvalue" as some programmers would call it a sacrilegous and blasphemic perversion of far-spread
  * programming paradigms to ever come up with an idea of doing such a thing.
  * 
  * @author Reto Scheiwiller, (c) Copyright 2026
@@ -194,7 +194,7 @@ public class Unvalue implements Comparable<Unvalue> {
 		if(string.trim().startsWith("{")
 		|| string.trim().startsWith("[")) {
 			try {
-				JsonElement element = XRUtils.JSON.fromJson(string);
+				JsonElement element = XR.JSON.fromJson(string);
 				return newJson( element);
 			} catch (Exception e) {
 				return newString(string);
@@ -245,7 +245,7 @@ public class Unvalue implements Comparable<Unvalue> {
 
 			case JSON: 
 				if( Unvalue.checkIsJsonParsable(string) ) { 
-					return new Unvalue(UnvalueType.JSON, XRUtils.JSON.fromJson(string) );
+					return new Unvalue(UnvalueType.JSON, XR.JSON.fromJson(string) );
 				}else {
 					throw new IllegalStateException("The provided string was not a JSON string: "+string); 
 				}
@@ -475,7 +475,7 @@ public class Unvalue implements Comparable<Unvalue> {
 		if(trimmed.startsWith("{")
 		|| trimmed.startsWith("[")) {
 			try {
-				JsonElement element = XRUtils.JSON.fromJson(string);
+				JsonElement element = XR.JSON.fromJson(string);
 				return true;
 			} catch (Exception e) {
 				return false;
@@ -813,7 +813,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * 
 	 ******************************************************************************************************/
 	public ArrayList<String> getAsStringArray() {
-		 return XRUtils.JSON.jsonToStringArrayList(
+		 return XR.JSON.jsonToStringArrayList(
 				 getAsJsonArray() 
 			);
 	}
@@ -1059,7 +1059,7 @@ public class Unvalue implements Comparable<Unvalue> {
 		
 		if(o == null) { return -1; }
 		
-		return XRUtils.Text.compareStringsAlphanum(this.getAsString(), o.getAsString());
+		return XR.Text.compareStringsAlphanum(this.getAsString(), o.getAsString());
 	}
 
 }

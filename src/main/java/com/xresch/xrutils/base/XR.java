@@ -16,7 +16,7 @@ import com.xresch.xrutils.utils.XRTime;
  * @license MIT License
  **************************************************************************************/
 
-public class XRUtils {	
+public class XR {	
 	
 	/***********************************************************************************
 	 * Utility References
