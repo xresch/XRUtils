@@ -1,4 +1,4 @@
-package com.xresch.hsr.utils;
+package com.xresch.xrutils.utils;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.xresch.hsr.base.XRUtils;
+import com.xresch.xrutils.base.XRUtils;
 
 import ch.qos.logback.classic.Logger;
 

@@ -1,4 +1,4 @@
-package com.xresch.hsr.utils;
+package com.xresch.xrutils.utils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

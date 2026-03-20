@@ -1,4 +1,4 @@
-package com.xresch.hsr.utils;
+package com.xresch.xrutils.utils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

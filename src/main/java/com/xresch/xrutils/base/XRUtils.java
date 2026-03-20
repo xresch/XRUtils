@@ -1,12 +1,12 @@
-package com.xresch.hsr.base;
+package com.xresch.xrutils.base;
 
-import com.xresch.hsr.utils.XRCSV;
-import com.xresch.hsr.utils.XRFiles;
-import com.xresch.hsr.utils.XRJson;
-import com.xresch.hsr.utils.XRMath;
-import com.xresch.hsr.utils.XRRandom;
-import com.xresch.hsr.utils.XRText;
-import com.xresch.hsr.utils.XRTime;
+import com.xresch.xrutils.utils.XRCSV;
+import com.xresch.xrutils.utils.XRFiles;
+import com.xresch.xrutils.utils.XRJson;
+import com.xresch.xrutils.utils.XRMath;
+import com.xresch.xrutils.utils.XRRandom;
+import com.xresch.xrutils.utils.XRText;
+import com.xresch.xrutils.utils.XRTime;
 
 /**************************************************************************************
  * The Report class provides methods to add items to the reports, create screenshots

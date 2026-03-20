@@ -1,4 +1,4 @@
-package com.xresch.hsr.utils;
+package com.xresch.xrutils.utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.xresch.hsr.base.XRUtils;
-import com.xresch.hsr.base.XRUtils.JSON;
-import com.xresch.hsr.base.XRUtils.Text;
+import com.xresch.xrutils.base.XRUtils;
+import com.xresch.xrutils.base.XRUtils.JSON;
+import com.xresch.xrutils.base.XRUtils.Text;
 
 /**************************************************************************************************************
  * A Value class that allows to bypass type safety that like to get into the way of programmers.

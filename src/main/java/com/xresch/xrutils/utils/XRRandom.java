@@ -1,4 +1,4 @@
-package com.xresch.hsr.utils;
+package com.xresch.xrutils.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,8 +23,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.xresch.hsr.base.XRUtils;
-import com.xresch.hsr.utils.XRTime.XRTimeUnit;
+import com.xresch.xrutils.base.XRUtils;
+import com.xresch.xrutils.utils.XRTime.XRTimeUnit;
 
 /**************************************************************************************************************
  * Utility Class copied and adjusted from the CoreFramework project (Class: com.xresch.cfw.utils.CFWRandom).
