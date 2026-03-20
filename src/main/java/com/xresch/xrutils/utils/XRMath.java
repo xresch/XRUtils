@@ -814,8 +814,8 @@ public class XRMath {
 	 * 
 	 * @return CFWMathPeriodic
 	 ***********************************************************************************************/
-	public static CFWMathPeriodic createPeriodic(int period, int precision) {
-		return INSTANCE.new CFWMathPeriodic(period, precision);
+	public static XRMathPeriodic createPeriodic(int period, int precision) {
+		return INSTANCE.new XRMathPeriodic(period, precision);
 	}
 	
 	/***********************************************************************************************
@@ -826,8 +826,8 @@ public class XRMath {
 	 * 
 	 * @return CFWMathParabolicSAR
 	 ***********************************************************************************************/
-	public static CFWMathParabolicSAR createParabolicSAR(double acceleration, double accelerationMax, int precision) {
-		return INSTANCE.new CFWMathParabolicSAR(acceleration, accelerationMax, precision);
+	public static XRMathParabolicSAR createParabolicSAR(double acceleration, double accelerationMax, int precision) {
+		return INSTANCE.new XRMathParabolicSAR(acceleration, accelerationMax, precision);
 	}
 	
 	/***********************************************************************************************
@@ -837,7 +837,7 @@ public class XRMath {
 	 * @author retos
 	 *
 	 ***********************************************************************************************/
-	public class CFWMathPeriodic {
+	public class XRMathPeriodic {
 		
 		
 		int period = -1;
@@ -857,7 +857,7 @@ public class XRMath {
 		 * @param precision decimal precision, number of digits after the decimal point
 		 * 
 		 ***********************************************************************************************/
-		public CFWMathPeriodic(int period, int precision){
+		public XRMathPeriodic(int period, int precision){
 			this.period = period;
 			this.bigPeriod = new BigDecimal(period).setScale(precision);
 			this.bigPeriodMinusOne = bigPeriod.subtract(ONE);
@@ -1119,7 +1119,7 @@ public class XRMath {
 	 * @author retos
 	 *
 	 ***********************************************************************************************/
-	public class CFWMathParabolicSAR {
+	public class XRMathParabolicSAR {
 		
 		double acceleration = -1;
 		double accelerationMax = -1;
@@ -1146,7 +1146,7 @@ public class XRMath {
 		 * @param precision decimal precision, number of digits after the decimal point
 		 * 
 		 ***********************************************************************************************/
-		public CFWMathParabolicSAR(double acceleration, double accelerationMax, int precision){
+		public XRMathParabolicSAR(double acceleration, double accelerationMax, int precision){
 			this.acceleration = acceleration;
 			this.accelerationMax = accelerationMax;
 			
