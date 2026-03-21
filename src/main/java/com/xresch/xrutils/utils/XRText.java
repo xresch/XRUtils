@@ -36,7 +36,8 @@ public class XRText {
 		, DO_NOT_MATCH_REGEX
 	}
 	
-	private static LinkedHashMap<String, String> checkTypeOptions = new LinkedHashMap<>();
+	protected static LinkedHashMap<String, String> checkTypeOptions = new LinkedHashMap<>();
+	
 	static {
 		checkTypeOptions.put(CheckType.CONTAINS.toString(), "Contains");
 		checkTypeOptions.put(CheckType.DOES_NOT_CONTAIN.toString(), "Does Not Contain");
