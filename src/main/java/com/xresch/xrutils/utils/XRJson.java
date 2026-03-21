@@ -9,12 +9,17 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +34,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.Strictness;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.xresch.xrutils.json.JsonArrayListView;
 
 /**************************************************************************************************************
  * Utility Class copied and adjusted from the CoreFramework project (Class: com.xresch.cfw.utils.json.CFWJson).
@@ -41,14 +47,12 @@ public class XRJson {
 	
 	private static final Logger logger = LoggerFactory.getLogger(XRJson.class);
 	
-	private static Gson gsonInstance;
-	private static Gson gsonInstancePretty;
+	protected static Gson gsonInstance;
+	protected static Gson gsonInstancePretty;
 	
-	private static Gson gsonInstanceEncrypted;
-	//private static Gson prettyTabWriter;
-	
+	protected static Gson exposedOnlyInstance;
+
 	static{
-		//Type cfwobjectListType = new TypeToken<LinkedHashMap<CFWObject>>() {}.getType();
 
 		gsonInstance = createGsonBuilderBase()
 				.serializeNulls()
@@ -61,19 +65,20 @@ public class XRJson {
 				.setPrettyPrinting()
 				.create();
 		
+		exposedOnlyInstance = createGsonBuilderBase()
+				.excludeFieldsWithoutExposeAnnotation()
+				.serializeNulls()
+				.setStrictness(Strictness.LENIENT)
+				.create();
 	}
 			
 	
-	private static Gson exposedOnlyInstance = createGsonBuilderBase()
-			.excludeFieldsWithoutExposeAnnotation()
-			.serializeNulls()
-			.setStrictness(Strictness.LENIENT)
-			.create();
+
 	
 	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
-	private static GsonBuilder createGsonBuilderBase() {
+	protected static GsonBuilder createGsonBuilderBase() {
 		return new GsonBuilder();
 				//.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal());
 	}
@@ -330,7 +335,7 @@ public class XRJson {
 	}
 	
 	/*************************************************************************************
-	 * 
+	 * Escapes a string for JSON, but without double quotes.
 	 *************************************************************************************/
 	public static String escapeString(String string) {
 
@@ -343,6 +348,20 @@ public class XRJson {
     }
 	
 	/*************************************************************************************
+	 * Unescape a string.
+	 *************************************************************************************/
+	public static String unescapeString(String string) {
+
+		if(string != null) {
+	        for (String[] esc : escapes) {
+	            string = string.replace(esc[1], esc[0]);
+	        }
+		}
+		
+        return string;
+    }
+	
+	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
 	public static JsonArray arrayToJsonArray(Object[] array) {
@@ -351,11 +370,11 @@ public class XRJson {
 		for(Object o : array) {
 			if(o instanceof String) {	
 
-				try {
-			        jsonArray.add(Double.parseDouble((String)o));
-			    } catch (NumberFormatException e) {
-			    	jsonArray.add((String)o);
-			    }
+				if(!NumberUtils.isParsable((String)o)) {
+					jsonArray.add((String)o);
+				}else {
+					jsonArray.add(Double.parseDouble((String)o));
+				}
 
 			}
 			else if(o instanceof Number) 		{	jsonArray.add((Number)o); }
@@ -379,7 +398,16 @@ public class XRJson {
 	
 	}
 	
-	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public static void arraySortBy(JsonArray jsonArray, Comparator<? super JsonElement> comparator) {
+		
+		// Create a JsonArray to a List view instance
+		final List<JsonElement> jsonElements = JsonArrayListView.of(jsonArray);
+		// Sorting the jsonElements object
+		Collections.sort(jsonElements, comparator);
+	}
 		
 	/*************************************************************************************
 	 * 
@@ -564,6 +592,68 @@ public class XRJson {
 	public static boolean isNull(JsonElement e) {
 		return e == null || e.isJsonNull();
 	}
+		
+	/*************************************************************************************
+	 * Makes a CSV string from a JsonArray containing JsonObjects.
+	 * 
+	 * Takes the fieldnames of the first object as headers and to select values from
+	 * every consecutive object.
+	 * 
+	 * @deprecated use toCSV() instead
+	 * @return empty string if array is empty
+	 *************************************************************************************/
+	@Deprecated
+	public static String formatJsonArrayToCSV(JsonArray convertThis, String delimiter) {
+		
+		if(convertThis == null || convertThis.isEmpty() ) { return ""; }
+		
+		//------------------------------------------
+		// Create Header 
+		StringBuilder csv = new StringBuilder();
+		ArrayList<String> memberNames = new ArrayList<>(); 
+		
+		for(Entry<String, JsonElement> entry : convertThis.get(0).getAsJsonObject().entrySet()) {
+			memberNames.add(entry.getKey());
+			csv.append("\"")
+			   .append(escapeString(entry.getKey()))
+			   .append("\"")
+			   .append(delimiter);
+		}
+		csv.deleteCharAt(csv.length()-1); //remove last comma
+		csv.append("\r\n");
+		
+		//------------------------------------------
+		// Create Rows
+		
+		convertThis.forEach(new Consumer<JsonElement>() {
+
+			@Override
+			public void accept(JsonElement element) {
+				
+				if(element != null && element.isJsonObject()) {
+					JsonObject object = element.getAsJsonObject();
+					for(String name : memberNames) {
+						
+						JsonElement currentValue = object.get(name);
+						
+						String stringValue = XRJson.toString(currentValue);
+						
+						csv.append("\"")
+						   .append(XRJson.escapeString(stringValue))
+						   .append("\"")
+						   .append(delimiter);
+					}
+					csv.deleteCharAt(csv.length()-1); //remove last comma
+					csv.append("\r\n");
+				}
+			}
+		});
+		
+
+		return csv.toString();
+		
+	}
+	
 		
 	/*************************************************************************************
 	 * Returns a JSON representation for a certificate.
