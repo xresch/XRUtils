@@ -3,6 +3,7 @@ package com.xresch.xrutils.utils;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
@@ -12,7 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.xresch.xrutils.base.XR;
 
-import ch.qos.logback.classic.Logger;
+
 
 
 /**************************************************************************************************************
@@ -241,7 +242,14 @@ public class XRCSV {
 								, boolean parseJsonStrings
 							) {
 	
-
+		//----------------------------
+		// Skip if Empty
+		if(csv == null || csv.isBlank()) {
+			return new JsonArray();
+		}
+		
+		//----------------------------
+		// Create Scanner
 		Scanner scanner = new Scanner(csv.trim());
 	
 		//----------------------------

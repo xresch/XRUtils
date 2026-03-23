@@ -15,12 +15,13 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,7 +35,7 @@ import com.google.gson.GsonBuilder;
 
 public class HSRReportUtils {
 	
-	public static Logger logger = Logger.getLogger(HSRReportUtils.class.getName());
+	public static Logger logger = LoggerFactory.getLogger(HSRReportUtils.class.getName());
 	private static final int BUFFER_SIZE = 4096;
 	
 	
@@ -101,7 +102,7 @@ public class HSRReportUtils {
 		    });
 	    
 		} catch (IOException e) {
-			logger.severe("Issue extracting zip file: "+e.getMessage());
+			logger.error("Issue extracting zip file: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -139,7 +140,7 @@ public class HSRReportUtils {
 			}
 			
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error extracting zip file", e);
+			logger.error("Error extracting zip file", e);
 			e.printStackTrace();
 		}finally{
 			try {
@@ -161,7 +162,7 @@ public class HSRReportUtils {
 			try {
 				FileUtils.deleteDirectory(fileOrDirectory);
 			} catch (IOException e) {
-				logger.log(Level.SEVERE, "Error occured deleting directory '"+fileOrDirectory.getPath()+"'.", e);
+				logger.error("Error occured deleting directory '"+fileOrDirectory.getPath()+"'.", e);
 				e.printStackTrace();
 			}
 	
@@ -177,7 +178,7 @@ public class HSRReportUtils {
 		try {
 			FileUtils.copyDirectory(new File(sourceDir), new File(targetDir));
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error occured copying directory '"+sourceDir+"' to '"+targetDir+"'.", e);
+			logger.error("Error occured copying directory '"+sourceDir+"' to '"+targetDir+"'.", e);
 			e.printStackTrace();
 		}
 	}
@@ -190,7 +191,7 @@ public class HSRReportUtils {
 		try {
 			FileUtils.copyFile(sourceFile, new File(targetFilePath));
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error occured copying file '"+sourceFile.getPath()+"' to '"+targetFilePath+"'.", e);
+			logger.error("Error occured copying file '"+sourceFile.getPath()+"' to '"+targetFilePath+"'.", e);
 			e.printStackTrace();
 		}
 	}
@@ -206,7 +207,7 @@ public class HSRReportUtils {
 			Files.write(Paths.get(filepath), fileContent.getBytes());
 
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error occured writing file '"+filepath+"'.", e);
+			logger.error("Error occured writing file '"+filepath+"'.", e);
 			e.printStackTrace();
 		}
 
@@ -227,7 +228,7 @@ public class HSRReportUtils {
 			Files.write(path, content.getBytes(charset));
 			
 		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Error replacing in file'"+filepath+"'.", e);
+			logger.error("Error replacing in file'"+filepath+"'.", e);
 			e.printStackTrace();
 		}
 
