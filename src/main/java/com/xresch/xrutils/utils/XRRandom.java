@@ -277,7 +277,19 @@ public class XRRandom {
 	 * @return random value, null if Set is empty or null
 	 * 
 	 ******************************************************************************/
-	public static <T> T fromSet(int nullRatioPercent, Set<T> set) {
+	public static <T> T fromSet(Set<T> set) {
+		return fromSet(set, 0);
+	}
+	/******************************************************************************
+	 * Returns a random item from a Set.
+	 * @param set to choose from
+	 * @param nullRatioPercent number from 0 to 100 to determine if a null value
+	 * should be returned.
+	 * 
+	 * @return random value, null if Set is empty or null
+	 * 
+	 ******************************************************************************/
+	public static <T> T fromSet(Set<T> set, int nullRatioPercent) {
 		
 		if(set == null || set.isEmpty()) {
 			return null;
@@ -304,21 +316,31 @@ public class XRRandom {
 	/******************************************************************************
 	 * Returns a random item from a Set.
 	 * 
-	 * @param nullRatioPercent number from 0 to 100 to determine if a null value
-	 * should be returned.
 	 * @param map to choose from
 	 * 
 	 * @return random value, null if Set is empty or null
 	 * 
 	 ******************************************************************************/
-	public static <T,K> Entry<T,K> fromMap(int nullRatioPercent, Map<T,K> map) {
+	public static <T,K> Entry<T,K> fromMap(Map<T,K> map) {
+		return fromMap(map, 0);
+	}
+	
+	/******************************************************************************
+	 * Returns a random item from a Set.
+	 * @param map to choose from
+	 * @param nullRatioPercent number from 0 to 100 to determine if a null value
+	 * should be returned.
+	 * 
+	 * @return random value, null if Set is empty or null
+	 * 
+	 ******************************************************************************/
+	public static <T,K> Entry<T,K> fromMap(Map<T,K> map, int nullRatioPercent) {
 		
 		if(map == null || map.isEmpty()) {
 			return null;
 		}
 		
 		if( checkReturnNull(nullRatioPercent) ) { return null; }
-		
 		
 		int index = random.nextInt(map.size());
 
@@ -1179,7 +1201,7 @@ public class XRRandom {
 	}
 	
 	/******************************************************************************
-	 * Creates a random json array of people with various properties.
+	 * Creates a random json array containing random strings.
 	 * 
 	 * @param count
 	 ******************************************************************************/
