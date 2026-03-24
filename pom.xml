@@ -16,8 +16,7 @@
 	<properties>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<otel.version>1.49.0</otel.version>
-		
+
 		<skipJavadoc>false</skipJavadoc>
 		<skipTests>true</skipTests>
 		<skipSigning>false</skipSigning>
@@ -43,8 +42,8 @@
 
 	<!-- ================= SCM ================== -->
 	<scm>
-		<connection>scm:git:git://github.com/xresch/HieraStatsReport.git</connection>
-		<developerConnection>scm:git:ssh://github.com/xresch/HieraStatsReport.git</developerConnection>
+		<connection>scm:git:git://github.com/xresch/XRUtils.git</connection>
+		<developerConnection>scm:git:ssh://github.com/xresch/XRUtils.git</developerConnection>
 		<url>https://github.com/xresch/XRUtils/tree/main</url>
 	</scm>
 
@@ -140,29 +139,8 @@
 		    <version>1.8.2</version>
 		    <scope>provided</scope>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-commons -->
-		<!-- dependency>
-		    <groupId>org.junit.platform</groupId>
-		    <artifactId>junit-platform-suite-commons</artifactId>
-		    <version>1.8.2</version>
-		    <scope>runtime</scope>
-		</dependency -->
 		
-		 <dependency>
-	      <groupId>com.microsoft.playwright</groupId>
-	      <artifactId>playwright</artifactId>
-	      <version>1.38.0</version>
-	      <scope>provided</scope>
-	    </dependency>
-    
-		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
-		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>selenium-java</artifactId>
-		    <version>4.1.2</version>
-		    <scope>provided</scope>
-		</dependency>
+
 	</dependencies>
 
 
