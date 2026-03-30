@@ -18,7 +18,7 @@ import com.google.common.base.Joiner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.xresch.xrutils.database.ResultSetUtils;
+import com.xresch.xrutils.database.XRResultSetUtils;
 
 
 /***************************************************************************
@@ -596,7 +596,7 @@ public class Unrecord {
 			success = false;
 			logger.error("SQL Exception occured while trying to map ResultSet to fields. Check Cursor position.", e);
 		}finally {
-			ResultSetUtils.close(result, true);
+			XRResultSetUtils.close(result);
 		}
 		
 		return records;
@@ -640,7 +640,7 @@ public class Unrecord {
 		} catch (SQLException e) {
 			logger.error("SQL Exception occured while trying to map ResultSet to Unrecord.", e);
 		}finally {
-			ResultSetUtils.close(result, true);
+			XRResultSetUtils.close(result);
 		}
 		
 		return records;
@@ -684,7 +684,7 @@ public class Unrecord {
 		} catch (SQLException e) {
 			logger.error("SQL Exception occured while trying to map ResultSet to Unrecord.", e);
 		}finally {
-			ResultSetUtils.close(result, true);
+			XRResultSetUtils.close(result);
 		}
 		
 		return records;
