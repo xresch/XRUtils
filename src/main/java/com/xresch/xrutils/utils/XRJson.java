@@ -38,7 +38,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
 import com.xresch.xrutils.json.SerializerBigDecimal;
-import com.xresch.xrutils.json.SerializerResultSet;
+import com.xresch.xrutils.json.XRSerializerResultSet;
 
 /**************************************************************************************************************
  * Utility Class copied and adjusted from the CoreFramework project (Class: com.xresch.cfw.utils.json.CFWJson).
@@ -85,7 +85,7 @@ public class XRJson {
 	protected static GsonBuilder createGsonBuilderBase() {
 		return new GsonBuilder()
 				.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal())
-				.registerTypeHierarchyAdapter(ResultSet.class, new SerializerResultSet())
+				.registerTypeHierarchyAdapter(ResultSet.class, new XRSerializerResultSet())
 				;
 	}
 	/*************************************************************************************

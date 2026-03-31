@@ -16,7 +16,7 @@ import com.xresch.xrutils.database.XRResultSetUtils;
  * @author Reto Scheiwiller, (c) Copyright 2019 
  * @license MIT-License
  **************************************************************************************************************/
-public class SerializerResultSet implements JsonSerializer<ResultSet> {
+public class XRSerializerResultSet implements JsonSerializer<ResultSet> {
 	
 
 	@Override
