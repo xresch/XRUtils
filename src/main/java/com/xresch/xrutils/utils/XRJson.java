@@ -2,10 +2,12 @@ package com.xresch.xrutils.utils;
 
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.security.cert.X509Certificate;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ import com.google.gson.Strictness;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
+import com.xresch.xrutils.json.SerializerBigDecimal;
+import com.xresch.xrutils.json.SerializerResultSet;
 
 /**************************************************************************************************************
  * Utility Class copied and adjusted from the CoreFramework project (Class: com.xresch.cfw.utils.json.CFWJson).
@@ -79,8 +83,10 @@ public class XRJson {
 	 * 
 	 *************************************************************************************/
 	protected static GsonBuilder createGsonBuilderBase() {
-		return new GsonBuilder();
-				//.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal());
+		return new GsonBuilder()
+				.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal())
+				.registerTypeHierarchyAdapter(ResultSet.class, new SerializerResultSet())
+				;
 	}
 	/*************************************************************************************
 	 * 

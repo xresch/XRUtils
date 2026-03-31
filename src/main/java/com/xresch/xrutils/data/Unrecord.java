@@ -132,7 +132,9 @@ public class Unrecord {
 	
 	/***********************************************************************
 	 * Adds a value for a key. If a value has already been assigned 
-	 * for that key it will be replaced.
+	 * for that key it will be replaced. Automatically detects the data type 
+	 * from the string. Data types that will be detected are null, number, 
+	 * boolean, string, JsonObject and JsonArray.
 	 * 
 	 * @param key
 	 * @param value
@@ -564,6 +566,8 @@ public class Unrecord {
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
 	 * 
+	 * This method closes the result set.
+	 * 
 	 * @param result to convert
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
@@ -607,6 +611,8 @@ public class Unrecord {
 	 * Converts data types on a best effort basis. Numbers will be converted as numbers, date and time will 
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
+	 * 
+	 * This method closes the result set.
 	 * 
 	 * @param result to convert
 	 * @param keyColumnName the column that should be used as the maps key
@@ -652,6 +658,8 @@ public class Unrecord {
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
 	 * 
+	 * This method closes the result set.
+	 * 
 	 * @param result to convert
 	 * @param keyColumnName the column that contains the ID should be used as the maps key
 	 * 
@@ -694,9 +702,13 @@ public class Unrecord {
 	/******************************************************************************************************
 	 * INTERNAL METHOD: Needs a results set as input that is already read.
 	 * 
-	 * Converts data types on a best effort basis. Numbers will be converted as numbers, date and time will 
-	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
-	 * parsed to a JsonObject or JsonArray it will do so.
+	 * Converts data types on a best effort basis. 
+	 * <ul>
+	 * 	<li><b>Numbers:</b> will be converted as numbers.</li>
+	 * 	<li><b>Boolean:</b> will be converted as boolean.</li>
+	 * 	<li><b>Date/Time:</b> Date and time will be converted to epoch millis.</li>
+	 * 	<li><b>Everything else:</b> will be converted as a string. If the string can be 
+	 *        parsed to a JsonObject or JsonArray it will do so.</li>
 	 * 
 	 * @param result set to process
 	 * @return metadata of the result set
@@ -716,8 +728,11 @@ public class Unrecord {
 			
 				case Types.SMALLINT:
 				case Types.INTEGER:
-				case Types.BIGINT:
 					record.add(propertyName, result.getInt(i));
+					break;
+				
+				case Types.BIGINT:
+					record.add(propertyName, result.getLong(i));
 					break;
 					
 				case Types.DECIMAL:
@@ -730,6 +745,10 @@ public class Unrecord {
 				
 				case Types.FLOAT:
 					record.add(propertyName, result.getFloat(i));
+					break;	
+					
+				case Types.BOOLEAN:
+					record.add(propertyName, result.getBoolean(i));
 					break;	
 					
 				case Types.DATE:

@@ -1,7 +1,5 @@
 package com.xresch.xrutils.database;
 
-import java.sql.Array;
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -13,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.xresch.xrutils.base.XR;
 import com.xresch.xrutils.data.Unrecord;
@@ -26,13 +23,13 @@ import com.xresch.xrutils.data.Unrecord;
  **************************************************************************************************************/
 public class XRResultSetUtils {
 	
-	private static Logger logger = LoggerFactory.getLogger(XRResultSetUtils.class.getName());
+	static Logger logger = LoggerFactory.getLogger(XRResultSetUtils.class.getName());
 	
 	private static final XRResultSetUtils INSTANCE = new XRResultSetUtils();
 	
 		
 	/********************************************************************************************
-	 * 
+	 * Closes the result set and it's connection.
 	 * @param resultSet which should be closed.
 	 ********************************************************************************************/
 	public static void close(ResultSet resultSet){
@@ -54,11 +51,12 @@ public class XRResultSetUtils {
 	
 	/****************************************************************
 	 * Executes the query and returns the first value of the first
-	 * column as integer.
+	 * column as integer. Closes the result set.
+	 * 
 	 * Useful for getting counts, averages, maximum etc...
 	 * @return integer value, 0 if no rows are selected, null in case of errors
 	 ****************************************************************/
-	public static Integer getFirstAsInteger(ResultSet result, boolean doClose) {
+	public static Integer getFirstAsInteger(ResultSet result) {
 		
 		try {
 			if(result.next()) {
@@ -88,7 +86,6 @@ public class XRResultSetUtils {
 	 ***************************************************************************/
 	public static ArrayList<Unrecord> toUnrecordList(ResultSet result) {
 		
-
 		return Unrecord.resultSetToList(result);
 		
 	}
@@ -98,7 +95,9 @@ public class XRResultSetUtils {
 	 * Converts a ResultSet into a map of Keys and Unrecords.
 	 * This method closes the result set.
 	 * 
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * @param result set
+	 * @param keyColumnName name of the column that should be used as the key
+	 * @return map of object, empty if results set is null or an error occurs.
 	 ***************************************************************************/
 	public static LinkedHashMap<String, Unrecord> toKeyUnrecordMap(ResultSet result, String keyColumnName) {
 		
@@ -110,7 +109,9 @@ public class XRResultSetUtils {
 	 * Converts a ResultSet into a map of Keys and Unrecords.
 	 * This method closes the result set.
 	 * 
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * @param result set
+	 * @param idColumnName name of the column that should be used as the id
+	 * @return map of object, empty if results set is null or an error occurs.
 	 ***************************************************************************/
 	public static LinkedHashMap<Integer, Unrecord> toIdUnrecordMap(ResultSet result, String idColumnName) {
 		
@@ -152,6 +153,7 @@ public class XRResultSetUtils {
 	/***************************************************************************
 	 * Converts a ResultSet into a map with the key/values of the selected columns.
 	 * This method closes the result set.
+	 * 
 	 * @return map of objects, empty if results set is null or an error occurs.
 	 ***************************************************************************/
 	public static LinkedHashMap<String, String> toKeyValueMapString(ResultSet result, String keyColumnName, String valueColumnName) {
@@ -181,7 +183,13 @@ public class XRResultSetUtils {
 	
 	/***************************************************************************
 	 * Converts a ResultSet into a map with the key/values of the selected columns.
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * This method closes the results set.
+	 * 
+	 * @param result set
+	 * @param idColumnName the column containing the IDs 
+	 * @param valueColumnName the column containing the values
+	 * @return map of objects, empty if results set is null or an error occurs.
+	 * 
 	 ***************************************************************************/
 	public static LinkedHashMap<Integer, Object> toIDValueMap(ResultSet result, Object idColumnName, Object valueColumnName) {
 		
@@ -210,6 +218,8 @@ public class XRResultSetUtils {
 	
 	/***************************************************************************
 	 * Converts a ResultSet into a list of maps with key/values.
+	 * This method closes the results set.
+	 * 
 	 * @return list of maps holding key(column name) with values
 	 ***************************************************************************/
 	public static ArrayList<LinkedHashMap<String, Object>> toListOfKeyValueMaps(ResultSet result) {
@@ -247,15 +257,26 @@ public class XRResultSetUtils {
 	}
 	
 	/***************************************************************
-	 * Execute the Query and gets the result as a string array.
+	 * Execute the Query and gets the values of the specified 
+	 * column as a string array.
+	 * This method closes the results set.
+	 * 
+	 * @param result
+	 * @param columnName
+	 * @return string array
 	 ***************************************************************/
 	public static String[] toStringArray(ResultSet result, String columnName) {
 		return toStringArrayList(result, columnName).toArray(new String[] {});
 	}
 	
 	/***************************************************************************
-	 * Converts a ResultSet into a map with the key/values of the selected columns.
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * Execute the Query and gets the values of the specified 
+	 * column as an ArrayList of strings.
+	 * This method closes the results set.
+	 * 
+	 * @param result
+	 * @param columnName
+	 * @return ArrayList of strings
 	 ***************************************************************************/
 	public static ArrayList<String> toStringArrayList(ResultSet result, String columnName) {
 		
@@ -283,8 +304,13 @@ public class XRResultSetUtils {
 	
 	
 	/***************************************************************************
-	 * Converts a ResultSet into a map with the key/values of the selected columns.
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * Execute the Query and gets the values of the specified 
+	 * column as an ArrayList of integers.
+	 * This method closes the results set.
+	 * 
+	 * @param result
+	 * @param columnName
+	 * @return ArrayList of integers
 	 ***************************************************************************/
 	public static ArrayList<Integer> toIntegerArrayList(ResultSet result, String columnName) {
 		
@@ -312,7 +338,12 @@ public class XRResultSetUtils {
 	
 	/***************************************************************************
 	 * Converts a ResultSet into a map with the key/values of the selected columns.
-	 * @return list of object, empty if results set is null or an error occurs.
+	 * This method closes the result set.
+	 * 
+	 * @param result set
+	 * @param idColumnName the column containing the IDs 
+	 * @param valueColumnName the column containing the values
+	 * @return map of objects, empty if results set is null or an error occurs.
 	 ***************************************************************************/
 	public static LinkedHashMap<Object, Object> toLinkedHashMap(ResultSet result, Object keyColumnName, Object valueColumnName) {
 		
@@ -350,14 +381,18 @@ public class XRResultSetUtils {
 	
 	/********************************************************************************************
 	 * Returns a ResultSetAsJsonReader to convert SQL records to json objects one by one. 
-	 * 
+	 * ResultSetAsJsonReader will close the result set when fully read to reader.next() == null.
+	 * @param result set to read
+	 * @return ResultSetAsJsonReader
 	 ********************************************************************************************/
-	public static ResultSetAsJsonReader toJSONReader(ResultSet resultSet) {
-		return INSTANCE.new ResultSetAsJsonReader(resultSet);
+	public static ResultSetAsJsonReader toJSONReader(ResultSet result) {
+		return new ResultSetAsJsonReader(result);
 	}
 	
 	/***************************************************************************
 	 * Converts a ResultSet into a JsonArray.
+	 * This method closes the result set.
+	 * 
 	 * @return list of maps holding key(column name) with values
 	 ***************************************************************************/
 	public static JsonArray toJSONArray(ResultSet result) {
@@ -381,6 +416,7 @@ public class XRResultSetUtils {
 
 	/********************************************************************************************
 	 * Converts the ResultSet into a CSV string.
+	 * This method closes the result set.
 	 * 
 	 ********************************************************************************************/
 	public static String toCSV(ResultSet resultSet, String delimiter) {
@@ -423,6 +459,8 @@ public class XRResultSetUtils {
 		} catch (SQLException e) {
 				logger.error("Exception occured while converting ResultSet to CSV.", e);
 				return "";
+		}finally {
+			close(resultSet);
 		}
 	
 		return csv.toString();
@@ -430,6 +468,7 @@ public class XRResultSetUtils {
 
 	/********************************************************************************************
 	 * Returns an XML string with an array containing a record for each row.
+	 * This method closes the result set.
 	 * 
 	 ********************************************************************************************/
 	public static String toXML(ResultSet resultSet) {
@@ -440,13 +479,6 @@ public class XRResultSetUtils {
 			if(resultSet == null) {
 				return "<data></data>";
 			}
-			//--------------------------------------
-			// Check has results
-			/* Excluded as MSSQL might throw errors			
-			resultSet.beforeFirst();
-			if(!resultSet.isBeforeFirst()) {
-				return "<data></data>";			
-			}*/
 			
 			//--------------------------------------
 			// Iterate results
@@ -473,80 +505,11 @@ public class XRResultSetUtils {
 					.error("Exception occured while converting ResultSet to XML.", e);
 				
 				return "<data></data>";
+		}finally {
+			close(resultSet);
 		}
 	
 		return xml.toString();
-	}
-	
-
-	/**************************************************************************************************************
-	 * Reads records from a Result set and converts them into Json Objects.
-	 * 
-	 **************************************************************************************************************/
-	public class ResultSetAsJsonReader {
-		
-		private ResultSet resultSet = null;
-		private ResultSetMetaData metadata;
-		private int columnCount;
-		/****************************************************************
-		 * 
-		 ****************************************************************/
-		public ResultSetAsJsonReader(ResultSet resultSet) {
-			this.resultSet = resultSet;
-			try {
-				this.metadata = resultSet.getMetaData();
-				this.columnCount = metadata.getColumnCount();
-			}catch (SQLException e) {
-					logger.error("Error while initializing ResultSetAsJsonReader:"+e.getMessage(), e);
-			}
-			
-		}
-		
-		/****************************************************************
-		 * Returns the next JsonObject or null if the end of the result set was reached.
-		 ****************************************************************/
-		public JsonObject next() {
-
-			if(this.resultSet == null) {
-				return null;
-			}
-			
-			try {
-				
-				if(resultSet.next()) {
-					JsonObject record = new JsonObject();
-					for(int i = 1 ; i <= columnCount; i++) {
-						String name = metadata.getColumnLabel(i);
-						
-						if(name.toUpperCase().startsWith("JSON")) {
-							JsonElement asElement = XR.JSON.stringToJsonElement(resultSet.getString(i));
-							record.add(name, asElement);
-						}else {
-							
-							Object value = resultSet.getObject(i);
-							if(value instanceof Clob) {			XR.JSON.addObject(record, name, resultSet.getString(i)); }
-							else if(value instanceof Array) {	XR.JSON.addObject(record, name, ((Array)value).getArray()); } 
-							else {									
-								XR.JSON.addObject(record, name, value);
-							}
-						}
-					}
-					return record;
-				}else {
-					//-------------------------
-					// end of results
-					close(resultSet);
-					return null;
-				}
-			} catch (SQLException e) {
-				close(resultSet);
-				logger.error("Error while reading SQL results:"+e.getMessage(), e);
-			}
-			
-			//return null in case of error;
-			return null;
-		}
-		
 	}
 		
 }
