@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.xresch.xrutils.database.ResultSetAsJsonReader;
+import com.xresch.xrutils.database.XRResultSetAsJsonReader;
 import com.xresch.xrutils.database.XRResultSetUtils;
 
 /**************************************************************************************************************
@@ -24,7 +24,7 @@ public class SerializerResultSet implements JsonSerializer<ResultSet> {
 		
 		JsonArray result = new JsonArray();
 		
-		ResultSetAsJsonReader reader = XRResultSetUtils.toJSONReader(resultSet);
+		XRResultSetAsJsonReader reader = XRResultSetUtils.toJSONReader(resultSet);
 		
 		JsonObject object;
 		while( (object = reader.next()) != null) {

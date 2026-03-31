@@ -14,7 +14,7 @@ import com.xresch.xrutils.base.XR;
  * Reads records from a Result set and converts them into Json Objects.
  * 
  **************************************************************************************************************/
-public class ResultSetAsJsonReader {
+public class XRResultSetAsJsonReader {
 	
 	private ResultSet resultSet = null;
 	private ResultSetMetaData metadata;
@@ -22,7 +22,7 @@ public class ResultSetAsJsonReader {
 	/****************************************************************
 	 * 
 	 ****************************************************************/
-	public ResultSetAsJsonReader(ResultSet resultSet) {
+	public XRResultSetAsJsonReader(ResultSet resultSet) {
 		this.resultSet = resultSet;
 		try {
 			this.metadata = resultSet.getMetaData();
@@ -66,11 +66,11 @@ public class ResultSetAsJsonReader {
 			}else {
 				//-------------------------
 				// end of results
-				XRResultSetUtils.closeResult(resultSet);
+				XRResultSetUtils.close(resultSet);
 				return null;
 			}
 		} catch (SQLException e) {
-			XRResultSetUtils.closeResult(resultSet);
+			XRResultSetUtils.close(resultSet);
 			XRResultSetUtils.logger.error("Error while reading SQL results:"+e.getMessage(), e);
 		}
 		

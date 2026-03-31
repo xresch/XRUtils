@@ -385,8 +385,8 @@ public class XRResultSetUtils {
 	 * @param result set to read
 	 * @return ResultSetAsJsonReader
 	 ********************************************************************************************/
-	public static ResultSetAsJsonReader toJSONReader(ResultSet result) {
-		return new ResultSetAsJsonReader(result);
+	public static XRResultSetAsJsonReader toJSONReader(ResultSet result) {
+		return new XRResultSetAsJsonReader(result);
 	}
 	
 	/***************************************************************************
@@ -401,7 +401,7 @@ public class XRResultSetUtils {
 		if(result == null) {
 			return resultArray;
 		}
-		ResultSetAsJsonReader reader = XRResultSetUtils.toJSONReader(result);
+		XRResultSetAsJsonReader reader = XRResultSetUtils.toJSONReader(result);
 		
 		JsonObject object;
 		while( (object = reader.next()) != null) {
