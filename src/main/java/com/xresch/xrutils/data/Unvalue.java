@@ -11,16 +11,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSyntaxException;
 import com.xresch.xrutils.base.XR;
-import com.xresch.xrutils.base.XR.JSON;
-import com.xresch.xrutils.base.XR.Text;
 
 /**************************************************************************************************************
  * A Value class that allows to bypass type safety that like to get into the way of programmers.
- * Also called an "Unvalue" as some programmers would call it a sacrilegous and blasphemic perversion of far-spread
+ * 
+ * Called "Unvalue" as some programmers would call it a sacrilegous and blasphemic perversion of far-spread
  * programming paradigms to ever come up with an idea of doing such a thing.
  * 
  * @author Reto Scheiwiller, (c) Copyright 2026

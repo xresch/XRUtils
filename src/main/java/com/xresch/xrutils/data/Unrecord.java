@@ -324,6 +324,18 @@ public class Unrecord {
 		return this;
 	}
 	
+	/***********************************************************************
+	 * Overloaded method to simplify working with enumerations.
+	 * This method will call the Object.toString() method and calls the 
+	 * this.containsKey(String) method.
+	 * 
+	 * @param key
+	 * @return true if the record contains a value for the given key
+	 ***********************************************************************/
+	public boolean containsKey(Object key) {
+		if(key == null) { return containsKey(key); }
+		return containsKey(key.toString());
+	}
 	
 	/***********************************************************************
 	 * 
@@ -360,7 +372,6 @@ public class Unrecord {
 	 * that is null if not available
 	 ***********************************************************************/
 	public Unvalue get(Object key) {
-		if(key == null) { return Unvalue.newNull(); };
 		return get(key.toString());
 	}
 	
@@ -374,9 +385,6 @@ public class Unrecord {
 	 ***********************************************************************/
 	public Unvalue get(String key) {
 		if(!keyValues.containsKey(key)) {
-			String message = "Data Record did not contain a field with name: "+key;
-			logger.warn(message);
-			
 			return Unvalue.newNull();
 		}
 		return keyValues.get(key);
@@ -389,7 +397,8 @@ public class Unrecord {
 	 * @return String value or null
 	 ***********************************************************************/
 	public String getString(Object key) {
-		return get(key).getAsString();
+		if(key == null) { return get(key).getAsString(); }
+		return get(key.toString()).getAsString();
 	}
 	
 	/***********************************************************************
@@ -399,7 +408,8 @@ public class Unrecord {
 	 * @return Integer value or null
 	 ***********************************************************************/
 	public Integer getInteger(Object key) {
-		return get(key).getAsInteger();
+		if(key == null) { return get(key).getAsInteger(); }
+		return get(key.toString()).getAsInteger();
 	}
 	
 	/***********************************************************************
@@ -409,7 +419,8 @@ public class Unrecord {
 	 * @return Long value or null
 	 ***********************************************************************/
 	public Long getLong(Object key) {
-		return get(key).getAsLong();
+		if(key == null) { return get(key).getAsLong(); }
+		return get(key.toString()).getAsLong();
 	}
 	
 	/***********************************************************************
@@ -419,7 +430,8 @@ public class Unrecord {
 	 * @return Double value or null
 	 ***********************************************************************/
 	public Double getDouble(Object key) {
-		return get(key).getAsDouble();
+		if(key == null) { return get(key).getAsDouble(); }
+		return get(key.toString()).getAsDouble();
 	}
 	
 	/***********************************************************************
@@ -429,7 +441,8 @@ public class Unrecord {
 	 * @return Float value or null
 	 ***********************************************************************/
 	public Float getFloat(Object key) {
-		return get(key).getAsFloat();
+		if(key == null) { return get(key).getAsFloat(); }
+		return get(key.toString()).getAsFloat();
 	}
 	
 	/***********************************************************************
@@ -439,7 +452,8 @@ public class Unrecord {
 	 * @return Number value or null
 	 ***********************************************************************/
 	public Number getNumber(Object key) {
-		return get(key).getAsNumber();
+		if(key == null) { return get(key).getAsNumber(); }
+		return get(key.toString()).getAsNumber();
 	}
 	
 	
@@ -450,7 +464,8 @@ public class Unrecord {
 	 * @return BigDecimal value or null
 	 ***********************************************************************/
 	public BigDecimal getBigDecimal(Object key) {
-		return get(key).getAsBigDecimal();
+		if(key == null) { return get(key).getAsBigDecimal(); }
+		return get(key.toString()).getAsBigDecimal();
 	}
 	
 	/***********************************************************************
@@ -460,7 +475,8 @@ public class Unrecord {
 	 * @return Boolean value 
 	 ***********************************************************************/
 	public Boolean getBoolean(Object key) {
-		return get(key).getAsBoolean();
+		if(key == null) { return get(key).getAsBoolean(); }
+		return get(key.toString()).getAsBoolean();
 	}
 	
 	/***********************************************************************
@@ -470,7 +486,8 @@ public class Unrecord {
 	 * @return JsonArray value 
 	 ***********************************************************************/
 	public JsonArray getJsonArray(Object key) {
-		return get(key).getAsJsonArray();
+		if(key == null) { return get(key).getAsJsonArray(); }
+		return get(key.toString()).getAsJsonArray();
 	}
 	
 	/***********************************************************************
@@ -480,7 +497,8 @@ public class Unrecord {
 	 * @return JsonObject value 
 	 ***********************************************************************/
 	public JsonObject getJsonObject(Object key) {
-		return get(key).getAsJsonObject();
+		if(key == null) { return get(key).getAsJsonObject(); }
+		return get(key.toString()).getAsJsonObject();
 	}
 	
 	/***********************************************************************
@@ -490,7 +508,8 @@ public class Unrecord {
 	 * @return JsonElement value 
 	 ***********************************************************************/
 	public JsonElement getJsonElement(Object key) {
-		return get(key).getAsJsonElement();
+		if(key == null) { return get(key).getAsJsonElement(); }
+		return get(key.toString()).getAsJsonElement();
 	}
 	
 	/***********************************************************************
@@ -591,7 +610,7 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = currentResultSetRowToRecord(result, metadata);
+				Unrecord record = resultSetRowToRecord(result, metadata);
 				
 				records.add(record);
 			}
@@ -638,7 +657,7 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = currentResultSetRowToRecord(result, metadata);
+				Unrecord record = resultSetRowToRecord(result, metadata);
 				
 				records.put(record.getString(keyColumnName), record);
 			}
@@ -684,7 +703,7 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = currentResultSetRowToRecord(result, metadata);
+				Unrecord record = resultSetRowToRecord(result, metadata);
 				
 				records.put(record.getInteger(idColumnName), record);
 			}
@@ -700,7 +719,8 @@ public class Unrecord {
 
 	
 	/******************************************************************************************************
-	 * INTERNAL METHOD: Needs a results set as input that is already read.
+	 * Takes a results set as input that is being read. Cursor must be on the row that should be converted
+	 * to a Unrecord.
 	 * 
 	 * Converts data types on a best effort basis. 
 	 * <ul>
@@ -713,7 +733,7 @@ public class Unrecord {
 	 * @param result set to process
 	 * @return metadata of the result set
 	 ******************************************************************************************************/
-	private static Unrecord currentResultSetRowToRecord(ResultSet result, ResultSetMetaData metadata)
+	public static Unrecord resultSetRowToRecord(ResultSet result, ResultSetMetaData metadata)
 			throws SQLException {
 		
 		Unrecord record = new Unrecord();
