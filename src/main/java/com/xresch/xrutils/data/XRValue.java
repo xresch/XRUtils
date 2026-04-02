@@ -16,26 +16,22 @@ import com.xresch.xrutils.base.XR;
 
 /**************************************************************************************************************
  * A Value class that allows to bypass type safety that like to get into the way of programmers.
- * 
- * Called "Unvalue" as some programmers would call it a sacrilegous and blasphemic perversion of far-spread
- * programming paradigms to ever come up with an idea of doing such a thing.
+ * Provides various useful methods that can check
  * 
  * @author Reto Scheiwiller, (c) Copyright 2026
  * @license MIT License
  * 
  **************************************************************************************************************/
-public class Unvalue implements Comparable<Unvalue> {
+public class XRValue implements Comparable<XRValue> {
 	
-	private UnvalueType type;
+	private XRValueType type;
 	private Object value = null;
 	
-	// set to true to NOT convert strings that are fieldnames to the value of the field
-	private boolean isLiteral = false;
 		
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public enum UnvalueType{
+	public enum XRValueType{
 		  NUMBER
 		, STRING
 		, BOOLEAN
@@ -48,7 +44,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * 
 	 ******************************************************************************************************/
 	@Override
-	public Unvalue clone() {
+	public XRValue clone() {
 		return this.getAsClone();
 	}
 			
@@ -56,13 +52,13 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Private Constructor to enforce correct types.
 	 * 
 	 ******************************************************************************************************/
-	private Unvalue(UnvalueType type, Object value) {
+	private XRValue(XRValueType type, Object value) {
 		super();
 		this.value = value;
 		if(value != null) {
 			this.type = type;
 		}else {
-			this.type = UnvalueType.NULL;
+			this.type = XRValueType.NULL;
 		}
 	}
 		
@@ -70,90 +66,90 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * 
 	 ******************************************************************************************************/
 	// Overload method to improve performance of getAsBigDecimal()
-	public static Unvalue newNumber(Integer value){
+	public static XRValue newNumber(Integer value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, new BigDecimal(value));
+		return new XRValue(XRValueType.NUMBER, new BigDecimal(value));
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
 	// Overload method to improve performance of getAsBigDecimal()
-	public static Unvalue newNumber(Long value){
+	public static XRValue newNumber(Long value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, new BigDecimal(value));
+		return new XRValue(XRValueType.NUMBER, new BigDecimal(value));
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
 	// Overload method to improve performance of getAsBigDecimal()
-	public static Unvalue newNumber(Short value){
+	public static XRValue newNumber(Short value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, new BigDecimal(value));
+		return new XRValue(XRValueType.NUMBER, new BigDecimal(value));
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
 	// Overload method to improve performance of getAsBigDecimal()
-	public static Unvalue newNumber(Float value){
+	public static XRValue newNumber(Float value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, new BigDecimal(value));
+		return new XRValue(XRValueType.NUMBER, new BigDecimal(value));
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
 	// Overload method to improve performance of getAsBigDecimal()
-	public static Unvalue newNumber(Double value){
+	public static XRValue newNumber(Double value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, new BigDecimal(value));
+		return new XRValue(XRValueType.NUMBER, new BigDecimal(value));
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public static Unvalue newNumber(Number value){
+	public static XRValue newNumber(Number value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.NUMBER, value);
+		return new XRValue(XRValueType.NUMBER, value);
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public static Unvalue newString(String value){
+	public static XRValue newString(String value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.STRING,value);
+		return new XRValue(XRValueType.STRING,value);
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public static Unvalue newNull(){
-		return new Unvalue(UnvalueType.NULL, null);
+	public static XRValue newNull(){
+		return new XRValue(XRValueType.NULL, null);
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public static Unvalue newBoolean(Boolean value){
+	public static XRValue newBoolean(Boolean value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.BOOLEAN, value);
+		return new XRValue(XRValueType.BOOLEAN, value);
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public static Unvalue newJson(JsonElement value){
+	public static XRValue newJson(JsonElement value){
 		if(value == null) { return newNull(); }
-		return new Unvalue(UnvalueType.JSON, value);
+		return new XRValue(XRValueType.JSON, value);
 	}
 	
 	/******************************************************************************************************
 	 * Creates a new value based on the type of the JsonElement
 	 ******************************************************************************************************/
-	public static Unvalue newFromJsonElement(JsonElement value){
+	public static XRValue newFromJsonElement(JsonElement value){
 		
 		if(value == null || value.isJsonNull()) {
 			return newNull(); 
@@ -176,9 +172,9 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Data types that will be detected are null, number, boolean, string, JsonObject and JsonArray.
 	 * 
 	 * @param string to convert
-	 * @return Unvalue for string
+	 * @return XRValue for string
 	 ******************************************************************************************************/
-	public static Unvalue newFromString(String string) {
+	public static XRValue newFromString(String string) {
 	
 		if(string == null) {	return newNull(); }
 		
@@ -206,12 +202,12 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Creates a new value from a string based on the type.
 	 * Enforces correct types by throwing nasty exceptions.
 	 ******************************************************************************************************/
-	public static Unvalue newFromString(UnvalueType type, String string) throws IllegalStateException {
+	public static XRValue newFromString(XRValueType type, String string) throws IllegalStateException {
 		
 		//-----------------------------
 		// Handle Nulls
 		if(string == null) {
-			return Unvalue.newNull();
+			return XRValue.newNull();
 		}
 		
 		
@@ -221,11 +217,11 @@ public class Unvalue implements Comparable<Unvalue> {
 		switch (type) {
 			
 			case STRING: 
-				return new Unvalue(UnvalueType.STRING, string.trim() ); 
+				return new XRValue(XRValueType.STRING, string.trim() ); 
 			
 			case BOOLEAN: 
-				if( Unvalue.checkIsStringABoolean(string) ) { 
-					return new Unvalue(UnvalueType.BOOLEAN, Boolean.parseBoolean(string.trim()));
+				if( XRValue.checkIsStringABoolean(string) ) { 
+					return new XRValue(XRValueType.BOOLEAN, Boolean.parseBoolean(string.trim()));
 				}else {
 					throw new IllegalStateException("The provided string was not a boolean: "+string); 
 				} 
@@ -233,7 +229,7 @@ public class Unvalue implements Comparable<Unvalue> {
 			
 			case NUMBER: 
 				if( NumberUtils.isCreatable(string) ) { 
-					return new Unvalue(UnvalueType.NUMBER, new BigDecimal(string.trim()));
+					return new XRValue(XRValueType.NUMBER, new BigDecimal(string.trim()));
 				} else {
 					throw new IllegalStateException("The provided string was not a number: "+string); 
 				}
@@ -241,8 +237,8 @@ public class Unvalue implements Comparable<Unvalue> {
 			
 
 			case JSON: 
-				if( Unvalue.checkIsJsonParsable(string) ) { 
-					return new Unvalue(UnvalueType.JSON, XR.JSON.fromJson(string) );
+				if( XRValue.checkIsJsonParsable(string) ) { 
+					return new XRValue(XRValueType.JSON, XR.JSON.fromJson(string) );
 				}else {
 					throw new IllegalStateException("The provided string was not a JSON string: "+string); 
 				}
@@ -253,14 +249,14 @@ public class Unvalue implements Comparable<Unvalue> {
 
 		}
 		
-		return Unvalue.newNull();
+		return XRValue.newNull();
 		
 	}
 	
 	/******************************************************************************************************
 	 * Creates a new QueryPart based on the type of the JsonElement
 	 ******************************************************************************************************/
-	public static Unvalue newFromStringArray(ArrayList<String> array){
+	public static XRValue newFromStringArray(ArrayList<String> array){
 		
 		JsonArray newArray = new JsonArray();
 		
@@ -311,14 +307,14 @@ public class Unvalue implements Comparable<Unvalue> {
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public UnvalueType type() {
+	public XRValueType type() {
 		return type;
 	}
 	
 	/******************************************************************************************************
 	 * 
 	 ******************************************************************************************************/
-	public boolean isOfType(UnvalueType type) {
+	public boolean isOfType(XRValueType type) {
 		return this.type == type;
 	}
 	
@@ -329,7 +325,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	public void nullToZero() {
 		if(value == null) {
 			this.value = 0;
-			this.type = UnvalueType.NUMBER;
+			this.type = XRValueType.NUMBER;
 		}
 	}
 	
@@ -346,7 +342,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	public boolean isNullOrEmptyString() {
 		return 
 			value == null 
-			|| (this.type == UnvalueType.STRING 
+			|| (this.type == XRValueType.STRING 
 				&& Strings.isNullOrEmpty((String)value) 
 			);
 	}
@@ -355,7 +351,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Check if the value is of type boolean
 	 ******************************************************************************************************/
 	public boolean isBoolean() {
-		return this.type == UnvalueType.BOOLEAN;
+		return this.type == XRValueType.BOOLEAN;
 	}
 	
 	/******************************************************************************************************
@@ -363,7 +359,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 ******************************************************************************************************/
 	public boolean isBooleanString() {
 		
-		if(this.type == UnvalueType.STRING) {
+		if(this.type == XRValueType.STRING) {
 			return  checkIsStringABoolean(this.getAsString());
 		}
 		
@@ -394,7 +390,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Check if the value is a number
 	 ******************************************************************************************************/
 	public boolean isNumber() {
-		return this.type == UnvalueType.NUMBER;
+		return this.type == XRValueType.NUMBER;
 	}
 	
 	
@@ -402,7 +398,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Check if the value is a number
 	 ******************************************************************************************************/
 	public boolean isNumberString() {
-		if(this.type == UnvalueType.STRING) {
+		if(this.type == XRValueType.STRING) {
 			String value = this.getAsString().trim();
 			
 			return NumberUtils.isParsable(value);
@@ -459,7 +455,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Check if the value is of type String
 	 ******************************************************************************************************/
 	public boolean isString() {
-		return this.type == UnvalueType.STRING;
+		return this.type == XRValueType.STRING;
 	}
 	
 	/******************************************************************************************************
@@ -487,37 +483,23 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Check if the value is of type JSON
 	 ******************************************************************************************************/
 	public boolean isJson() {
-		return this.type == UnvalueType.JSON;
+		return this.type == XRValueType.JSON;
 	}
 	
 	/******************************************************************************************************
 	 * Check if the value is a JSON Array
 	 ******************************************************************************************************/
 	public boolean isJsonArray() {
-		return this.type == UnvalueType.JSON && ((JsonElement)this.value).isJsonArray();
+		return this.type == XRValueType.JSON && ((JsonElement)this.value).isJsonArray();
 	}
 	
 	/******************************************************************************************************
 	 * Check if the value is a JSON Object
 	 ******************************************************************************************************/
 	public boolean isJsonObject() {
-		return this.type == UnvalueType.JSON && ((JsonElement)this.value).isJsonObject();
+		return this.type == XRValueType.JSON && ((JsonElement)this.value).isJsonObject();
 	}
 	
-	/******************************************************************************************************
-	 * Check if the value is literal
-	 ******************************************************************************************************/
-	public boolean isLiteral() {
-		return isLiteral;
-	}
-	
-	/******************************************************************************************************
-	 * Set this value to be a literal or not.
-	 * You might want to make a clone to make sure nothing breaks with the getAsClone() method. 
-	 ******************************************************************************************************/
-	public void isLiteral(boolean value) {
-		 isLiteral = value;
-	}
 	
 	/******************************************************************************************************
 	 * 
@@ -760,16 +742,16 @@ public class Unvalue implements Comparable<Unvalue> {
 	}
 	
 	/******************************************************************************************************
-	 * Takes the value of this QueryPartValue and wraps it into an array.
+	 * Takes the value of this XRValue and wraps it into an array.
 	 * @return the same object if it is already an array, new array if it is of another type
 	 ******************************************************************************************************/
-	public Unvalue convertToArray() {
+	public XRValue convertToArray() {
 		
 		if(this.isJsonArray()) {
 			return this;
 		}
 		
-		return Unvalue.newFromJsonElement(
+		return XRValue.newFromJsonElement(
 				this.getAsJsonArray()
 			);
 	}
@@ -816,25 +798,24 @@ public class Unvalue implements Comparable<Unvalue> {
 	}
 	
 	/******************************************************************************************************
-	 * Creates a clone of this QueryPartValue.
+	 * Creates a clone of this XRValue.
 	 ******************************************************************************************************/
-	public Unvalue getAsClone() {
+	public XRValue getAsClone() {
 		
 		switch(type) {
-			case NULL:		return Unvalue.newNull();
+			case NULL:		return XRValue.newNull();
 			
-			case JSON:		return Unvalue.newJson( ((JsonElement)value).deepCopy());
+			case JSON:		return XRValue.newJson( ((JsonElement)value).deepCopy());
 							
-			case NUMBER:	double myDouble = ((Number)value).doubleValue();
-							return Unvalue.newNumber(myDouble);
+			case NUMBER:	return XRValue.newNumber((Number)value);
 
 			case BOOLEAN: 	boolean boolClone = (Boolean)value;
-							return Unvalue.newBoolean(boolClone);
+							return XRValue.newBoolean(boolClone);
 			
 			case STRING:	String stringClone = ((String)value)+"";
-							return Unvalue.newString(stringClone);
+							return XRValue.newString(stringClone);
 
-			default:		return Unvalue.newNull();
+			default:		return XRValue.newNull();
 
 		}
 
@@ -847,7 +828,7 @@ public class Unvalue implements Comparable<Unvalue> {
 		if(value == null) return null;
 		
 		// convert numbers to string without scientific notation
-		if(type == UnvalueType.NUMBER) {
+		if(type == XRValueType.NUMBER) {
 			return this.getAsBigDecimal().stripTrailingZeros().toPlainString();
 		}
 		
@@ -1018,11 +999,11 @@ public class Unvalue implements Comparable<Unvalue> {
 		if (getClass() != obj.getClass()) 	{ return false; }
 		
 		
-		Unvalue other = (Unvalue) obj;
+		XRValue other = (XRValue) obj;
 		if(type == other.type) {
 			return Objects.equals(value, other.value);
-		}else if(type == UnvalueType.NULL 
-		|| other.type == UnvalueType.NULL   
+		}else if(type == XRValueType.NULL 
+		|| other.type == XRValueType.NULL   
 		){
 			return false;
 		}else {
@@ -1044,7 +1025,7 @@ public class Unvalue implements Comparable<Unvalue> {
 		if (obj == null) 					{ return false; }
 		if (getClass() != obj.getClass()) 	{ return false; }
 		
-		Unvalue other = (Unvalue) obj;
+		XRValue other = (XRValue) obj;
 		return type == other.type && Objects.equals(value, other.value);
 	}
 
@@ -1052,7 +1033,7 @@ public class Unvalue implements Comparable<Unvalue> {
 	 * Will compare as string.
 	 ******************************************************************************************************/
 	@Override
-	public int compareTo(Unvalue o) {
+	public int compareTo(XRValue o) {
 		
 		if(o == null) { return -1; }
 		

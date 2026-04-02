@@ -22,7 +22,7 @@ import com.xresch.xrutils.database.XRResultSetUtils;
 
 
 /***************************************************************************
- * A general record class that holds key-value pairs of Unvalues.
+ * A general record class that holds key-value pairs of XRValues.
  * Has some useful convertion methods.
  * 
  * Copyright Owner: Performetriks GmbH, Switzerland
@@ -32,11 +32,11 @@ import com.xresch.xrutils.database.XRResultSetUtils;
  * @license MIT License
  * 
  ***************************************************************************/
-public class Unrecord {
+public class XRRecord {
 	
-	private static final Logger logger = LoggerFactory.getLogger(Unrecord.class);
+	private static final Logger logger = LoggerFactory.getLogger(XRRecord.class);
 	
-	LinkedHashMap<String, Unvalue> keyValues = new LinkedHashMap<>();
+	LinkedHashMap<String, XRValue> keyValues = new LinkedHashMap<>();
 	
 	public static final String LB = "${";
 	public static final String RB = "}";
@@ -47,19 +47,19 @@ public class Unrecord {
 	/***********************************************************************
 	 * 
 	 ***********************************************************************/
-	public Unrecord() {
+	public XRRecord() {
 	}
 	
 	/***********************************************************************
 	 * Creates a new record based on the fields of a JsonObject.
 	 ***********************************************************************/
-	public Unrecord(JsonObject object) {
+	public XRRecord(JsonObject object) {
 		
 		for(Entry<String, JsonElement> entry : object.entrySet()) {
 			String name = entry.getKey();
-			Unvalue unvalue = Unvalue.newFromJsonElement(object.get(name));
+			XRValue value = XRValue.newFromJsonElement(object.get(name));
 			
-			this.add(name, unvalue);
+			this.add(name, value);
 			
 		}
 		
@@ -68,17 +68,17 @@ public class Unrecord {
 	/***********************************************************************
 	 * Creates a new record based on the key-value pairs of a Map.
 	 ***********************************************************************/
-	public Unrecord(Map<String, String> map, boolean convertTypes) {
+	public XRRecord(Map<String, String> map, boolean convertTypes) {
 		
 		for(Entry<String, String> entry : map.entrySet()) {
 			String name = entry.getKey();
 			
 			if(!convertTypes) {
-				Unvalue unvalue = Unvalue.newString(map.get(name));
-				this.add(name, unvalue);
+				XRValue value = XRValue.newString(map.get(name));
+				this.add(name, value);
 			}else {
-				Unvalue unvalue = Unvalue.newFromString(map.get(name));
-				this.add(name, unvalue);
+				XRValue value = XRValue.newFromString(map.get(name));
+				this.add(name, value);
 			}
 			
 		}
@@ -89,7 +89,7 @@ public class Unrecord {
 	 * Creates a new record using the values in the map.
 	 * 
 	 ***********************************************************************/
-	public Unrecord(Map<String, Unvalue> keyValues) {
+	public XRRecord(Map<String, XRValue> keyValues) {
 		
 		this.keyValues.putAll(keyValues);
 	}
@@ -98,8 +98,8 @@ public class Unrecord {
 	 * Create a clone of the data record.
 	 * @return clone of this instance
 	 ***********************************************************************/
-	public Unrecord clone() {
-		return new Unrecord(keyValues);
+	public XRRecord clone() {
+		return new XRRecord(keyValues);
 	}
 	
 	/***********************************************************************
@@ -111,7 +111,7 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, Unvalue value) {
+	public XRRecord add(String key, XRValue value) {
 		keyValues.put(key, value);
 		return this;
 	}
@@ -125,8 +125,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, String value) {
-		keyValues.put(key, Unvalue.newString(value));
+	public XRRecord add(String key, String value) {
+		keyValues.put(key, XRValue.newString(value));
 		return this;
 	}
 	
@@ -141,8 +141,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord addFromString(String key, String value) {
-		keyValues.put(key, Unvalue.newFromString(value));
+	public XRRecord addFromString(String key, String value) {
+		keyValues.put(key, XRValue.newFromString(value));
 		return this;
 	}
 	
@@ -155,8 +155,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, JsonObject value) {
-		keyValues.put(key, Unvalue.newJson(value));
+	public XRRecord add(String key, JsonObject value) {
+		keyValues.put(key, XRValue.newJson(value));
 		return this;
 	}
 	
@@ -169,8 +169,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, JsonArray value) {
-		keyValues.put(key, Unvalue.newJson(value));
+	public XRRecord add(String key, JsonArray value) {
+		keyValues.put(key, XRValue.newJson(value));
 		return this;
 	}
 	
@@ -183,8 +183,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, ArrayList<String> value) {
-		keyValues.put(key, Unvalue.newFromStringArray(value));
+	public XRRecord add(String key, ArrayList<String> value) {
+		keyValues.put(key, XRValue.newFromStringArray(value));
 		return this;
 	}
 	
@@ -197,8 +197,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, boolean value) {
-		keyValues.put(key, Unvalue.newBoolean(value));
+	public XRRecord add(String key, boolean value) {
+		keyValues.put(key, XRValue.newBoolean(value));
 		return this;
 	}
 	
@@ -211,8 +211,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, int value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, int value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -225,8 +225,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, long value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, long value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -239,8 +239,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, float value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, float value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -253,8 +253,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, double value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, double value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -267,8 +267,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, short value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, short value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -281,8 +281,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, Number value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, Number value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -295,8 +295,8 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord add(String key, BigDecimal value) {
-		keyValues.put(key, Unvalue.newNumber(value));
+	public XRRecord add(String key, BigDecimal value) {
+		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
 	
@@ -307,7 +307,7 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord addAll(Unrecord record) {
+	public XRRecord addAll(XRRecord record) {
 		keyValues.putAll(record.keyValues);
 		return this;
 	}
@@ -319,7 +319,7 @@ public class Unrecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public Unrecord addAll(Map<String, Unvalue> map) {
+	public XRRecord addAll(Map<String, XRValue> map) {
 		keyValues.putAll(map);
 		return this;
 	}
@@ -357,7 +357,7 @@ public class Unrecord {
 	 * no mapping for key.(A null return can also indicate that the map 
 	 * previously associated null with key.)
 	 ***********************************************************************/
-	public Unvalue remove(String key) {
+	public XRValue remove(String key) {
 		return keyValues.remove(key);
 	}
 	
@@ -368,10 +368,10 @@ public class Unrecord {
 	 * 
 	 * @param key
 	 * 
-	 * @return the value to which the specified key is mapped, or a Unvalue
+	 * @return the value to which the specified key is mapped, or a XRValue
 	 * that is null if not available
 	 ***********************************************************************/
-	public Unvalue get(Object key) {
+	public XRValue get(Object key) {
 		return get(key.toString());
 	}
 	
@@ -380,12 +380,12 @@ public class Unrecord {
 	 * 
 	 * @param key
 	 * 
-	 * @return the value to which the specified key is mapped, or a Unvalue
+	 * @return the value to which the specified key is mapped, or a XRValue
 	 * that is null if not available
 	 ***********************************************************************/
-	public Unvalue get(String key) {
+	public XRValue get(String key) {
 		if(!keyValues.containsKey(key)) {
-			return Unvalue.newNull();
+			return XRValue.newNull();
 		}
 		return keyValues.get(key);
 	}
@@ -580,7 +580,7 @@ public class Unrecord {
 	}
 	
 	/******************************************************************************************************
-	 * Converts the result set to a list of Unrecords.
+	 * Converts the result set to a list of XRRecords.
 	 * Converts data types on a best effort basis. Numbers will be converted as numbers, date and time will 
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
@@ -591,11 +591,11 @@ public class Unrecord {
 	 * @return true if successful, false otherwise
 	 ******************************************************************************************************/
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ArrayList<Unrecord> resultSetToList(ResultSet result) {
+	public static ArrayList<XRRecord> resultSetToList(ResultSet result) {
 		
 		ResultSetMetaData metadata;
 		boolean success = true;
-		ArrayList<Unrecord> records = new ArrayList<>();
+		ArrayList<XRRecord> records = new ArrayList<>();
 		
 		try {
 			
@@ -610,7 +610,7 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = resultSetRowToRecord(result, metadata);
+				XRRecord record = resultSetRowToRecord(result, metadata);
 				
 				records.add(record);
 			}
@@ -626,7 +626,7 @@ public class Unrecord {
 	}
 	
 	/******************************************************************************************************
-	 * Converts the result set to a map of Unrecords.
+	 * Converts the result set to a map of XRRecords.
 	 * Converts data types on a best effort basis. Numbers will be converted as numbers, date and time will 
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
@@ -638,11 +638,11 @@ public class Unrecord {
 	 * 
 	 ******************************************************************************************************/
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static LinkedHashMap<String, Unrecord> resultSetToKeyValueMap(ResultSet result, String keyColumnName) {
+	public static LinkedHashMap<String, XRRecord> resultSetToKeyValueMap(ResultSet result, String keyColumnName) {
 		
 		ResultSetMetaData metadata;
 
-		LinkedHashMap<String, Unrecord> records = new LinkedHashMap<>();
+		LinkedHashMap<String, XRRecord> records = new LinkedHashMap<>();
 		
 		try {
 			
@@ -657,13 +657,13 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = resultSetRowToRecord(result, metadata);
+				XRRecord record = resultSetRowToRecord(result, metadata);
 				
 				records.put(record.getString(keyColumnName), record);
 			}
 		
 		} catch (SQLException e) {
-			logger.error("SQL Exception occured while trying to map ResultSet to Unrecord.", e);
+			logger.error("SQL Exception occured while trying to map ResultSet to XRRecord.", e);
 		}finally {
 			XRResultSetUtils.close(result);
 		}
@@ -672,7 +672,7 @@ public class Unrecord {
 	}
 	
 	/******************************************************************************************************
-	 * Converts the result set to a map of Unrecords.
+	 * Converts the result set to a map of XRRecords.
 	 * Converts data types on a best effort basis. Numbers will be converted as numbers, date and time will 
 	 * be converted to epoch millis, everything else will be converted as a string. If the string can be 
 	 * parsed to a JsonObject or JsonArray it will do so.
@@ -684,11 +684,11 @@ public class Unrecord {
 	 * 
 	 ******************************************************************************************************/
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static LinkedHashMap<Integer, Unrecord> resultSetToIdValueMap(ResultSet result, String idColumnName) {
+	public static LinkedHashMap<Integer, XRRecord> resultSetToIdValueMap(ResultSet result, String idColumnName) {
 		
 		ResultSetMetaData metadata;
 
-		LinkedHashMap<Integer, Unrecord> records = new LinkedHashMap<>();
+		LinkedHashMap<Integer, XRRecord> records = new LinkedHashMap<>();
 		
 		try {
 			
@@ -703,13 +703,13 @@ public class Unrecord {
 
 			while(result.next()) {
 				
-				Unrecord record = resultSetRowToRecord(result, metadata);
+				XRRecord record = resultSetRowToRecord(result, metadata);
 				
 				records.put(record.getInteger(idColumnName), record);
 			}
 		
 		} catch (SQLException e) {
-			logger.error("SQL Exception occured while trying to map ResultSet to Unrecord.", e);
+			logger.error("SQL Exception occured while trying to map ResultSet to XRRecord.", e);
 		}finally {
 			XRResultSetUtils.close(result);
 		}
@@ -720,7 +720,7 @@ public class Unrecord {
 	
 	/******************************************************************************************************
 	 * Takes a results set as input that is being read. Cursor must be on the row that should be converted
-	 * to a Unrecord.
+	 * to a XRRecord.
 	 * 
 	 * Converts data types on a best effort basis. 
 	 * <ul>
@@ -733,10 +733,10 @@ public class Unrecord {
 	 * @param result set to process
 	 * @return metadata of the result set
 	 ******************************************************************************************************/
-	public static Unrecord resultSetRowToRecord(ResultSet result, ResultSetMetaData metadata)
+	public static XRRecord resultSetRowToRecord(ResultSet result, ResultSetMetaData metadata)
 			throws SQLException {
 		
-		Unrecord record = new Unrecord();
+		XRRecord record = new XRRecord();
 
 		for(int i=1; i <= metadata.getColumnCount(); i++) {
 			
@@ -791,16 +791,16 @@ public class Unrecord {
 	 * 
 	 * @return entrySet
 	 ***********************************************************************/
-	public Set<Entry<String, Unvalue>> entrySet() {
+	public Set<Entry<String, XRValue>> entrySet() {
 		return keyValues.entrySet();
 	}
 	
 	/***********************************************************************
 	 * Returns a clone of the HashMap that holds this record's key-value pairs.
 	 * 
-	 * @return LinkedHashMap<String, Unvalue>
+	 * @return LinkedHashMap<String, XRValue>
 	 ***********************************************************************/
-	public LinkedHashMap<String, Unvalue> toHashMap() {
+	public LinkedHashMap<String, XRValue> toHashMap() {
 		return new LinkedHashMap<>(keyValues);
 	}
 	
@@ -813,7 +813,7 @@ public class Unrecord {
 	public LinkedHashMap<String, String> toHashMapStrings() {
 		LinkedHashMap<String, String> stringMap = new LinkedHashMap<>();
 		
-		for(Entry<String, Unvalue> entry : keyValues.entrySet()) {
+		for(Entry<String, XRValue> entry : keyValues.entrySet()) {
 			stringMap.put(entry.getKey(), entry.getValue().getAsString());
 		}
 		
@@ -827,7 +827,7 @@ public class Unrecord {
 	public JsonObject toJsonObject() {
 		JsonObject object = new JsonObject();
 		
-		for(Entry<String, Unvalue> entry : keyValues.entrySet()) {
+		for(Entry<String, XRValue> entry : keyValues.entrySet()) {
 			object.add(entry.getKey(), entry.getValue().getAsJsonElement());
 		}
 		

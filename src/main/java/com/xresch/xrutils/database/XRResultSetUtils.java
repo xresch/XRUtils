@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.xresch.xrutils.base.XR;
-import com.xresch.xrutils.data.Unrecord;
+import com.xresch.xrutils.data.XRRecord;
 
 
 /**************************************************************************************************************
@@ -79,43 +79,43 @@ public class XRResultSetUtils {
 	}
 	
 	/***************************************************************************
-	 * Converts a ResultSet into an array list of Unrecords.
+	 * Converts a ResultSet into an array list of XRRecords.
 	 * This method closes the result set.
 	 * 
 	 * @return list of object, empty if results set is null or an error occurs.
 	 ***************************************************************************/
-	public static ArrayList<Unrecord> toUnrecordList(ResultSet result) {
+	public static ArrayList<XRRecord> toRecordList(ResultSet result) {
 		
-		return Unrecord.resultSetToList(result);
+		return XRRecord.resultSetToList(result);
 		
 	}
 	
 	
 	/***************************************************************************
-	 * Converts a ResultSet into a map of Keys and Unrecords.
+	 * Converts a ResultSet into a map of Keys and XRRecords.
 	 * This method closes the result set.
 	 * 
 	 * @param result set
 	 * @param keyColumnName name of the column that should be used as the key
 	 * @return map of object, empty if results set is null or an error occurs.
 	 ***************************************************************************/
-	public static LinkedHashMap<String, Unrecord> toKeyUnrecordMap(ResultSet result, String keyColumnName) {
+	public static LinkedHashMap<String, XRRecord> toKeyRecordMap(ResultSet result, String keyColumnName) {
 		
-		return Unrecord.resultSetToKeyValueMap(result, keyColumnName);
+		return XRRecord.resultSetToKeyValueMap(result, keyColumnName);
 
 	}
 	
 	/***************************************************************************
-	 * Converts a ResultSet into a map of Keys and Unrecords.
+	 * Converts a ResultSet into a map of Keys and XRRecords.
 	 * This method closes the result set.
 	 * 
 	 * @param result set
 	 * @param idColumnName name of the column that should be used as the id
 	 * @return map of object, empty if results set is null or an error occurs.
 	 ***************************************************************************/
-	public static LinkedHashMap<Integer, Unrecord> toIdUnrecordMap(ResultSet result, String idColumnName) {
+	public static LinkedHashMap<Integer, XRRecord> toIdRecordMap(ResultSet result, String idColumnName) {
 		
-		return Unrecord.resultSetToIdValueMap(result, idColumnName);
+		return XRRecord.resultSetToIdValueMap(result, idColumnName);
 
 	}
 	

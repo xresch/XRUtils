@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonObject;
-import com.xresch.xrutils.data.Unrecord;
-import com.xresch.xrutils.data.Unvalue;
+import com.xresch.xrutils.data.XRRecord;
+import com.xresch.xrutils.data.XRValue;
 
 /***************************************************************************
  * This is an example on how to programmatically execute a test on the 
@@ -21,10 +21,10 @@ import com.xresch.xrutils.data.Unvalue;
  * 
  ***************************************************************************/
 
-public class TestUnrecord {
+public class TestXRRecord {
 
-	private Unrecord record = 
-			new Unrecord()
+	private XRRecord record = 
+			new XRRecord()
 				.add("ID", "aca90d7d-e59e-4c91-b17")
 				.add("INDEX", 0)
 				.add("LIKES_TIRAMISU", false)
@@ -45,10 +45,10 @@ public class TestUnrecord {
 		
 		//-------------------------------------
 		// Execute Test
-		Unrecord record = new Unrecord();
+		XRRecord record = new XRRecord();
 		record.add("valueA", "A");
 		
-		Unrecord clone = record.clone();
+		XRRecord clone = record.clone();
 		clone.add("valueB", "B");
 		
 		Assertions.assertEquals(record.size(), 1, "record has 1 entry");
@@ -160,7 +160,7 @@ public class TestUnrecord {
 	@Test
 	void testRecord_toHashMap() throws InterruptedException {
 		
-		LinkedHashMap<String, Unvalue> map = record.toHashMap();
+		LinkedHashMap<String, XRValue> map = record.toHashMap();
 		
 		System.out.println("###### "+map);
 
