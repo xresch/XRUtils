@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xresch</groupId>
 	<artifactId>xrutils</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.1</version>
 	
 	<name>XRUtils</name>
 	<description>Library of various useful stuff.</description>
