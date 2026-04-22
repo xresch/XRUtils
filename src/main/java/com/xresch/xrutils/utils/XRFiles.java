@@ -228,6 +228,19 @@ public class XRFiles {
 	 * @param packageName e.g. "com.xresch.cfw.resources.js.bootstrap.js"
 	 * @return content as string or null if not found or not accessible.
 	 *************************************************************/
+	public static InputStream getPackageResourceAsInputStream(String packageName, String filename) {
+		
+		packageName = packageName.replaceAll("\\.", "/");
+		String resourcePath = packageName + "/" + filename;
+		
+		return XRFiles.class.getClassLoader().getResourceAsStream(resourcePath);
+		
+	}
+	/*************************************************************
+	 * Read a resource from the package and caches the file.
+	 * @param packageName e.g. "com.xresch.cfw.resources.js.bootstrap.js"
+	 * @return content as string or null if not found or not accessible.
+	 *************************************************************/
 	public static String readPackageResource(String packageName, String filename) {
 		String fileContent = null;
 		
