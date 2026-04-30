@@ -581,8 +581,8 @@ public class XRText {
 		if (val2 == null) 	{ return -1; }
 		if (val1 == val2)		{ return 0;  }
 		
-		int len1 = val1.length();
-		int len2 = val2.length();
+		int len1 = val1.stripTrailing().length();
+		int len2 = val2.stripTrailing().length();
 
 		int lim = Math.min(len1, len2);
         
@@ -599,17 +599,21 @@ public class XRText {
         		long digits1 = 0;
         		long digits2 = 0;
         		
-        		int k1;
-        		for(k1 = i+1; k1 < len1 && isDigit(c1); k1++ ) {
-        			digits1 += (digits1*10) + Character.digit(c1, 10);
+        		// ------- Get first number ------
+        		int k1 = i+1;
+        		for( ; k1 < len1 && isDigit(c1); k1++ ) {
+        			digits1 = (digits1*10) + Character.digit(c1, 10);
             		c1 = val1.charAt(k1);
         		}
-        		int k2;
-        		for(k2 = i+1; k2 < len2 && isDigit(c2); k2++ ) {
-        			digits2 += (digits2*10) + Character.digit(c2, 10);
+        		
+        		// ------- Get second number ------
+        		int k2 = i+1;
+        		for( ; k2 < len2 && isDigit(c2); k2++ ) {
+        			digits2 = (digits2*10) + Character.digit(c2, 10);
         			c2 = val2.charAt(k2);
         		}
         		
+        		// ------- compare numbers ------
         		if(digits1 != digits2) {
         			if(digits1 < digits2) {
         				return -1;
@@ -619,7 +623,7 @@ public class XRText {
             		
         		}else {
         			// set i to lower digit end
-        			i = (k1 < k2) ? k1 : k2;
+        			i = Math.min(k1, k2);
         		}
         		
         	}
