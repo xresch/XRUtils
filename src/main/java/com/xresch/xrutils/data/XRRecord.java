@@ -102,6 +102,60 @@ public class XRRecord {
 		return new XRRecord(keyValues);
 	}
 	
+	
+	/***********************************************************************
+	 * Adds the values as a JsonArray for a key. The keys toString() method 
+	 * will be used to get the string used to store the value. This method 
+	 * has the primary purpose to allow adding values using enum constants 
+	 * as keys without having to call the enums toString() method all the time. 
+	 * But you are free to use it for other cases as well. ^^
+	 * 
+	 * @param key
+	 * @param values
+	 * 
+	 * @return instance for chaining
+	 ***********************************************************************/
+	public XRRecord add(Object key, String... values) {
+		
+		String stringKey = null;
+		if(key != null) { stringKey = key.toString(); }
+		
+		return add(stringKey, values);
+	}
+	
+	/***********************************************************************
+	 * Adds a value for a key. The keys toString() method will be used to
+	 * get the string used to store the value. This method has the primary 
+	 * purpose to allow adding values using enum constants as keys without 
+	 * having to call the enums toString() method all the time. But you 
+	 * are free to use it for other cases as well. ^^
+	 * 
+	 * @param key object whose toString()
+	 * @param value an instance of String, Number, Boolean, XRValue, JsonArray, JsonObject, ArrayList<String>
+	 * 
+	 * @return instance for chaining
+	 ***********************************************************************/
+	public XRRecord add(Object key, Object value) {
+		
+		String stringKey = null;
+		
+		if(key != null) { stringKey = key.toString(); }
+
+		if(value instanceof String casted) 			{ add(stringKey, casted); }
+		else if(value instanceof Number casted) 	{ add(stringKey, casted); }
+		else if(value instanceof Boolean casted) 	{ add(stringKey, casted); }
+		else if(value instanceof XRValue casted) 	{ add(stringKey, casted); }
+		else if(value instanceof JsonArray casted) 	{ add(stringKey, casted); }
+		else if(value instanceof JsonObject casted) { add(stringKey, casted); }
+		else if(value instanceof String[] casted) 	{ add(stringKey, casted); }
+		else if(value instanceof ArrayList casted) 	{ add(stringKey, casted); }
+		else { throw new IllegalArgumentException(); }
+		
+		return this;
+	}
+	
+	
+	
 	/***********************************************************************
 	 * Adds a value for a key. If a value has already been assigned 
 	 * for that key it will be replaced.
@@ -197,7 +251,21 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, boolean value) {
+	public XRRecord add(String key, String... value) {
+		keyValues.put(key, XRValue.newFromStrings(value));
+		return this;
+	}
+	
+	/***********************************************************************
+	 * Adds a value for a key. If a value has already been assigned 
+	 * for that key it will be replaced.
+	 * 
+	 * @param key
+	 * @param value
+	 * 
+	 * @return instance for chaining
+	 ***********************************************************************/
+	public XRRecord add(String key, Boolean value) {
 		keyValues.put(key, XRValue.newBoolean(value));
 		return this;
 	}
@@ -211,7 +279,7 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, int value) {
+	public XRRecord add(String key, Integer value) {
 		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
@@ -225,7 +293,7 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, long value) {
+	public XRRecord add(String key, Long value) {
 		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
@@ -239,7 +307,7 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, float value) {
+	public XRRecord add(String key, Float value) {
 		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
@@ -253,7 +321,7 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, double value) {
+	public XRRecord add(String key, Double value) {
 		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
@@ -267,7 +335,7 @@ public class XRRecord {
 	 * 
 	 * @return instance for chaining
 	 ***********************************************************************/
-	public XRRecord add(String key, short value) {
+	public XRRecord add(String key, Short value) {
 		keyValues.put(key, XRValue.newNumber(value));
 		return this;
 	}
@@ -410,6 +478,17 @@ public class XRRecord {
 	public Integer getInteger(Object key) {
 		if(key == null) { return get(key).getAsInteger(); }
 		return get(key.toString()).getAsInteger();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an integer value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Integer value or null
+	 ***********************************************************************/
+	public Integer getInt(Object key) {
+		if(key == null) { return get(key).getAsInt(); }
+		return get(key.toString()).getAsInt();
 	}
 	
 	/***********************************************************************

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.xresch.xrutils.data.XRRecord;
 import com.xresch.xrutils.data.XRValue;
@@ -37,6 +38,59 @@ public class TestXRRecord {
 				.add("SEARCH_FOR", "Gianduiotto")
 				;
 	
+	public enum TestFields {
+		ID, INDEX, LIKES_TIRAMISU, USER, FIRSTNAME, LASTNAME, LOCATION, EMAIL, VALUE, SEARCH_FOR, TAGS, OBJECT, ARRAY
+	}
+	
+	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	@Test
+	void testAddAndRetrieveUsingEnums() throws InterruptedException {
+		
+		XRRecord enumRecord = 
+				new XRRecord()
+					.add(TestFields.ID, "aca90d7d-e59e-4c91-b17")
+					.add(TestFields.INDEX, 0)
+					.add(TestFields.LIKES_TIRAMISU, false)
+					.add(TestFields.USER, "u.bjoerk")
+					.add(TestFields.FIRSTNAME, "Uranus")
+					.add(TestFields.LASTNAME, "Bjoerk")
+					.add(TestFields.LOCATION, "Aztlan")
+					.add(TestFields.EMAIL, "u.bjoerk@aztlan.com")
+					.add(TestFields.VALUE, 66)
+					.add(TestFields.SEARCH_FOR, "Gianduiotto")
+					.add(TestFields.TAGS, new String[] {"tag1", "tag2", "tag3"})
+					.add(TestFields.OBJECT, new JsonObject())
+					.add(TestFields.ARRAY, new JsonArray())
+					;
+		
+		Assertions.assertEquals(13, enumRecord.size(), "has 13 values");
+		Assertions.assertEquals(0, enumRecord.getInteger(TestFields.INDEX));
+		Assertions.assertEquals("aca90d7d-e59e-4c91-b17", enumRecord.getString(TestFields.ID));
+		Assertions.assertEquals("u.bjoerk", enumRecord.getString(TestFields.USER));
+		Assertions.assertEquals("Uranus", enumRecord.getString(TestFields.FIRSTNAME));
+		Assertions.assertEquals("Bjoerk", enumRecord.getString(TestFields.LASTNAME));
+		Assertions.assertEquals("Aztlan", enumRecord.getString(TestFields.LOCATION));
+		Assertions.assertEquals("u.bjoerk@aztlan.com", enumRecord.getString(TestFields.EMAIL));
+		Assertions.assertEquals(false, enumRecord.getBoolean(TestFields.LIKES_TIRAMISU));
+		Assertions.assertEquals(66, enumRecord.getInt(TestFields.VALUE));
+		Assertions.assertEquals("Gianduiotto", enumRecord.getString(TestFields.SEARCH_FOR));
+		Assertions.assertEquals("[\"tag1\",\"tag2\",\"tag3\"]", enumRecord.getString(TestFields.TAGS));
+		Assertions.assertEquals("{}", enumRecord.getString(TestFields.OBJECT));
+		Assertions.assertEquals("[]", enumRecord.getString(TestFields.ARRAY));
+		
+		//-------------------------------------
+		// Execute Test
+		enumRecord = 
+				new XRRecord()
+					.add(TestFields.TAGS, "tag1", "tag2", "tag3")
+					;
+		
+		Assertions.assertEquals(1, enumRecord.size(), "has 1 value");
+		Assertions.assertEquals("[\"tag1\",\"tag2\",\"tag3\"]", enumRecord.getString(TestFields.TAGS));
+	}
 	/*****************************************************************
 	 * 
 	 *****************************************************************/

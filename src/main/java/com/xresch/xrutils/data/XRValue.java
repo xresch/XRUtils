@@ -40,7 +40,7 @@ public class XRValue implements Comparable<XRValue> {
 	}
 	
 	/******************************************************************************************************
-	 * Creates a clone of the QueryPart.
+	 * Creates a clone of the XRValue.
 	 * 
 	 ******************************************************************************************************/
 	@Override
@@ -254,7 +254,7 @@ public class XRValue implements Comparable<XRValue> {
 	}
 	
 	/******************************************************************************************************
-	 * Creates a new QueryPart based on the type of the JsonElement
+	 * Creates a new XRValue as a JsonArray with the given Strings.
 	 ******************************************************************************************************/
 	public static XRValue newFromStringArray(ArrayList<String> array){
 		
@@ -267,10 +267,25 @@ public class XRValue implements Comparable<XRValue> {
 		return newJson(newArray);	
 		
 	}
+	
+	/******************************************************************************************************
+	 * Creates a new XRValue as a JsonArray with the given Strings.
+	 ******************************************************************************************************/
+	public static XRValue newFromStrings(String... strings){
+		
+		JsonArray newArray = new JsonArray();
+		
+		for(String current : strings) {
+			newArray.add(current);
+		}
+		
+		return newJson(newArray);	
+		
+	}
 
 
 	/******************************************************************************************************
-	 * Creates a new QueryPart based on the type of the JsonElement
+	 * Creates a new XRValue based on the type of the JsonElement
 	 ******************************************************************************************************/
 	public void addToJsonObject(String propertyName, JsonObject object){
 		
