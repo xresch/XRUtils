@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import com.google.gson.Strictness;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
-import com.xresch.xrutils.json.SerializerBigDecimal;
 import com.xresch.xrutils.json.TypeAdapterBigDecimal;
 import com.xresch.xrutils.json.XRSerializerResultSet;
 
@@ -371,8 +371,13 @@ public class XRJson {
 	
 	/*************************************************************************************
 	 * 
+	 * @return json array or empty array if input was null
 	 *************************************************************************************/
 	public static JsonArray arrayToJsonArray(Object[] array) {
+		
+		if(array == null) {
+			return new JsonArray();
+		}
 		
 		JsonArray jsonArray = new JsonArray();
 		for(Object o : array) {
@@ -399,10 +404,29 @@ public class XRJson {
 	
 	/*************************************************************************************
 	 * 
+	 * @return json array or empty array if input was null
 	 *************************************************************************************/
 	public static JsonArray arrayToJsonArray(ArrayList<?> array) {
 		
-		return arrayToJsonArray(array.toArray());
+		if(array != null) {
+			return arrayToJsonArray(array.toArray());
+		}else {
+			return new JsonArray();
+		}
+	
+	}
+	
+	/*************************************************************************************
+	 * 
+	 * @return json array or empty array if input was null
+	 *************************************************************************************/
+	public static JsonArray collectionToJsonArray(Collection<?> collection) {
+		
+		if(collection != null) {
+			return arrayToJsonArray(collection.toArray());
+		}else {
+			return new JsonArray();
+		}
 	
 	}
 	
