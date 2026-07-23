@@ -25,7 +25,7 @@ import com.xresch.xrutils.base.XR;
  **************************************************************************************************************/
 public class XRCSV {
 	
-	private static Logger logger = (Logger) LoggerFactory.getLogger(XRCSV.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(XRCSV.class.getName());
 	
 	/*******************************************************************
 	 * Splits a row of a CSV record while being aware of quotes.
