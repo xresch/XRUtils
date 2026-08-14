@@ -1,12 +1,15 @@
 package com.xresch.xrutils.test.data;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.xresch.xrutils.base.XR;
 import com.xresch.xrutils.data.XRRecord;
 import com.xresch.xrutils.data.XRValue;
 
@@ -42,6 +45,102 @@ public class TestXRRecord {
 		ID, INDEX, LIKES_TIRAMISU, USER, FIRSTNAME, LASTNAME, LOCATION, EMAIL, VALUE, SEARCH_FOR, TAGS, OBJECT, ARRAY
 	}
 	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	@Test
+	void testAddAndRetrieveUsingStrings() throws InterruptedException {
+		
+		XRRecord testRecord = 
+				new XRRecord()
+					.add("STRING", "aca90d7d-e59e-4c91-b17")
+					.add("BOOLEAN", false)
+					.add("INTEGER", 42)
+					.add("FLOAT", 42.42f)
+					.add("DOUBLE", 55.55d)
+					.add("BIGDECIMAL", new BigDecimal("123.456"))
+					.add("TAGS", new String[] {"tag1", "tag2", "tag3"})
+					.add("OBJECT", new JsonObject())
+					.add("ARRAY", new JsonArray())
+					.add("ELEMENT", (JsonElement)new JsonObject())
+					.add(null, "canDoNull")
+				;
+		
+		Assertions.assertEquals(11, testRecord.size(), "has 11 values");
+		Assertions.assertEquals("aca90d7d-e59e-4c91-b17", testRecord.getString("STRING"));
+		Assertions.assertEquals(false, testRecord.getBoolean("BOOLEAN"));
+		Assertions.assertEquals(42, testRecord.getInteger("INTEGER"));
+		Assertions.assertEquals(true, XR.Math.equals(42.42f, testRecord.getFloat("FLOAT"), 0.001f) );
+		Assertions.assertEquals(true, XR.Math.equals(55.55d, testRecord.getDouble("DOUBLE"), 0.001d) );
+
+		Assertions.assertEquals("[\"tag1\",\"tag2\",\"tag3\"]", testRecord.getString("TAGS"));
+		Assertions.assertEquals("{}", testRecord.getString("OBJECT"));
+		Assertions.assertEquals("[]", testRecord.getString("ARRAY"));
+		Assertions.assertEquals("{}", testRecord.getString("ELEMENT"));
+		
+		Assertions.assertEquals("canDoNull", testRecord.getString(null));
+	}
+	
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	@Test
+	void testRetrieveWithDefaultValues() throws InterruptedException {
+		
+		JsonObject object = new JsonObject();
+		object.addProperty("abc", "def");
+		
+		JsonArray array = new JsonArray();
+		array.add("a");
+		array.add("b");
+		array.add("c");
+		
+		XRRecord testRecord = 
+				new XRRecord()
+					.add("STRING", "aca90d7d-e59e-4c91-b17")
+					.add("BOOLEAN", false)
+					.add("INTEGER", 42)
+					.add("FLOAT", 42.42f)
+					.add("DOUBLE", 55.55d)
+					.add("BIGDECIMAL", new BigDecimal("123.456"))
+					.add("TAGS", new String[] {"tag1", "tag2", "tag3"})
+					.add("OBJECT", object)
+					.add("ARRAY", array)
+					.add("ELEMENT", (JsonElement)object)
+					.add(null, "canDoNull")
+				;
+		
+		Assertions.assertEquals(11, testRecord.size(), "has 11 values");
+		
+		Assertions.assertEquals("aca90d7d-e59e-4c91-b17", testRecord.getString("STRING", "default"));
+		Assertions.assertEquals("default"				, testRecord.getString("STRINGX", "default"));
+		
+		Assertions.assertEquals(false, testRecord.getBoolean("BOOLEAN" , true));
+		Assertions.assertEquals(true, testRecord.getBoolean("BOOLEANX", true));
+		
+		Assertions.assertEquals(42, testRecord.getInteger("INTEGER", 88));
+		Assertions.assertEquals(88, testRecord.getInteger("INTEGERX", 88));
+		
+		Assertions.assertEquals(true, XR.Math.equals(42.42f, testRecord.getFloat("FLOAT", 33.33f), 0.001f) );
+		Assertions.assertEquals(true, XR.Math.equals(33.33f, testRecord.getFloat("FLOATX", 33.33f), 0.001f) );
+		
+		Assertions.assertEquals(true, XR.Math.equals(55.55d, testRecord.getDouble("DOUBLE", 77.77d), 0.001d) );
+		Assertions.assertEquals(true, XR.Math.equals(77.77, testRecord.getDouble("DOUBLEX", 77.77d), 0.001d) );
+
+		Assertions.assertEquals("[\"tag1\",\"tag2\",\"tag3\"]", XR.JSON.toJSON( testRecord.getJsonArray("TAGS", new JsonArray()) ) );
+		Assertions.assertEquals("[]", XR.JSON.toJSON( testRecord.getJsonArray("TAGSX", new JsonArray()) ) );
+		
+		Assertions.assertEquals("{\"abc\":\"def\"}", XR.JSON.toJSON( testRecord.getJsonObject("OBJECT", new JsonObject()) ) );
+		Assertions.assertEquals("{}", XR.JSON.toJSON( testRecord.getJsonObject("OBJECTX", new JsonObject()) ) );
+
+		Assertions.assertEquals("[\"a\",\"b\",\"c\"]", XR.JSON.toJSON( testRecord.getJsonArray("ARRAY", new JsonArray()) ) );
+		Assertions.assertEquals("[]", XR.JSON.toJSON( testRecord.getJsonArray("ARRAYX", new JsonArray()) ) );
+		
+		Assertions.assertEquals("{\"abc\":\"def\"}", XR.JSON.toJSON( testRecord.getJsonElement("ELEMENT", new JsonObject()) ) );
+		Assertions.assertEquals("{}", XR.JSON.toJSON( testRecord.getJsonElement("ELEMENTX", new JsonObject()) ) );
+		
+		Assertions.assertEquals("canDoNull", testRecord.getString(null, "ABC"));
+	}
 	
 	/*****************************************************************
 	 * 
@@ -64,9 +163,10 @@ public class TestXRRecord {
 					.add(TestFields.TAGS, new String[] {"tag1", "tag2", "tag3"})
 					.add(TestFields.OBJECT, new JsonObject())
 					.add(TestFields.ARRAY, new JsonArray())
+					.add(null, "canDoNull")
 					;
 		
-		Assertions.assertEquals(13, enumRecord.size(), "has 13 values");
+		Assertions.assertEquals(14, enumRecord.size(), "has 14 values");
 		Assertions.assertEquals(0, enumRecord.getInteger(TestFields.INDEX));
 		Assertions.assertEquals("aca90d7d-e59e-4c91-b17", enumRecord.getString(TestFields.ID));
 		Assertions.assertEquals("u.bjoerk", enumRecord.getString(TestFields.USER));
@@ -80,6 +180,7 @@ public class TestXRRecord {
 		Assertions.assertEquals("[\"tag1\",\"tag2\",\"tag3\"]", enumRecord.getString(TestFields.TAGS));
 		Assertions.assertEquals("{}", enumRecord.getString(TestFields.OBJECT));
 		Assertions.assertEquals("[]", enumRecord.getString(TestFields.ARRAY));
+		Assertions.assertEquals("canDoNull", enumRecord.getString(null));
 		
 		//-------------------------------------
 		// Execute Test

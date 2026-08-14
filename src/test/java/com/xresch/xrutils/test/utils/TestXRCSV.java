@@ -234,7 +234,7 @@ public class TestXRCSV {
 		
 		JsonObject object;
 				
-		JsonArray array = XRCSV.toJsonArray("""
+		JsonArray array = XR.CSV.toJsonArray("""
 				category,entity,ATTributes,value
 				gatling,callAPI,{},123
 				gatling2,callURL,"{a: null, b: 1, c: true, d: \\"three\\" }",765

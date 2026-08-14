@@ -33,6 +33,49 @@ public class XRMath {
 	/** Math Context with precision of CFW.Math.GLOBAL_SCALE and rounding mode HALF_UP*/
 	public static final MathContext MATHCONTEXT_HALF_UP = new MathContext(GLOBAL_SCALE, ROUND_UP);
 	
+	
+	/***********************************************************************************************
+	 * Compares two float values with a tolerance.
+	 * 
+	 * @param floatA 
+	 * @param floatB 
+	 * @param tolerance allowed between the two numbers
+	 *  
+	 * @return true when numbers are the same considering the tolerance
+	 ***********************************************************************************************/
+	public static boolean equals(Float floatA, Float floatB, Float tolerance) {
+		
+		//-------------------------------
+		// Null check
+		if(floatA == null && floatB == null) { return true;}
+		if(floatA == null || floatB == null) { return false;}
+		
+		//-------------------------------
+		// Compare with Tolerance
+		return Math.abs(floatA - floatB) <= tolerance;
+	}
+	
+	/***********************************************************************************************
+	 * Compares two double values with a tolerance.
+	 * 
+	 * @param doubleA 
+	 * @param doubleB 
+	 * @param tolerance allowed between the two numbers
+	 *  
+	 * @return true when numbers are the same considering the tolerance
+	 ***********************************************************************************************/
+	public static boolean equals(Double doubleA, Double doubleB, Double tolerance) {
+		
+		//-------------------------------
+		// Null check
+		if(doubleA == null && doubleB == null) { return true;}
+		if(doubleA == null || doubleB == null) { return false;}
+		
+		//-------------------------------
+		// Compare with Tolerance
+		return Math.abs(doubleA - doubleB) <= tolerance;
+	}
+			
 	/***********************************************************************************************
 	 * Replaces all null values with zeros and returns a clone of the list.
 	 ***********************************************************************************************/

@@ -440,6 +440,7 @@ public class XRRecord {
 	 * that is null if not available
 	 ***********************************************************************/
 	public XRValue get(Object key) {
+		if(key == null) { return get( (String)key ); } // must cast to String to prevent StackOverflow on null values
 		return get(key.toString());
 	}
 	
@@ -457,7 +458,7 @@ public class XRRecord {
 		}
 		return keyValues.get(key);
 	}
-	
+		
 	/***********************************************************************
 	 * Get the value for a specified key as a string value.
 	 * 
@@ -465,8 +466,22 @@ public class XRRecord {
 	 * @return String value or null
 	 ***********************************************************************/
 	public String getString(Object key) {
-		if(key == null) { return get(key).getAsString(); }
-		return get(key.toString()).getAsString();
+		return get(key).getAsString();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as a string value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @param defaultValue if the key does not exist or value is null 
+	 * @return String value or null
+	 ***********************************************************************/
+	public String getString(Object key, String defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsString(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -476,8 +491,22 @@ public class XRRecord {
 	 * @return Integer value or null
 	 ***********************************************************************/
 	public Integer getInteger(Object key) {
-		if(key == null) { return get(key).getAsInteger(); }
-		return get(key.toString()).getAsInteger();
+		return get(key).getAsInteger();
+	}
+	
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an integer value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Integer value or null
+	 ***********************************************************************/
+	public Integer getInteger(Object key, Integer defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsInteger(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -487,8 +516,21 @@ public class XRRecord {
 	 * @return Integer value or null
 	 ***********************************************************************/
 	public Integer getInt(Object key) {
-		if(key == null) { return get(key).getAsInt(); }
-		return get(key.toString()).getAsInt();
+		return get(key).getAsInt();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an integer value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Integer value or null
+	 ***********************************************************************/
+	public Integer getInt(Object key, Integer defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsInt(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -498,8 +540,21 @@ public class XRRecord {
 	 * @return Long value or null
 	 ***********************************************************************/
 	public Long getLong(Object key) {
-		if(key == null) { return get(key).getAsLong(); }
-		return get(key.toString()).getAsLong();
+		return get(key).getAsLong();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an Long value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Long value or null
+	 ***********************************************************************/
+	public Long getLong(Object key, Long defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsLong(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -509,8 +564,21 @@ public class XRRecord {
 	 * @return Double value or null
 	 ***********************************************************************/
 	public Double getDouble(Object key) {
-		if(key == null) { return get(key).getAsDouble(); }
-		return get(key.toString()).getAsDouble();
+		return get(key).getAsDouble();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an Double value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Double value or null
+	 ***********************************************************************/
+	public Double getDouble(Object key, Double defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsDouble(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -520,8 +588,21 @@ public class XRRecord {
 	 * @return Float value or null
 	 ***********************************************************************/
 	public Float getFloat(Object key) {
-		if(key == null) { return get(key).getAsFloat(); }
-		return get(key.toString()).getAsFloat();
+		return get(key).getAsFloat();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an Float value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Float value or null
+	 ***********************************************************************/
+	public Float getFloat(Object key, Float defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsFloat(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -531,8 +612,21 @@ public class XRRecord {
 	 * @return Number value or null
 	 ***********************************************************************/
 	public Number getNumber(Object key) {
-		if(key == null) { return get(key).getAsNumber(); }
-		return get(key.toString()).getAsNumber();
+		return get(key).getAsNumber();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an Number value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Number value or null
+	 ***********************************************************************/
+	public Number getNumber(Object key, Number defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsNumber(); }
+		
+		return defaultValue;
 	}
 	
 	
@@ -543,9 +637,23 @@ public class XRRecord {
 	 * @return BigDecimal value or null
 	 ***********************************************************************/
 	public BigDecimal getBigDecimal(Object key) {
-		if(key == null) { return get(key).getAsBigDecimal(); }
-		return get(key.toString()).getAsBigDecimal();
+		return get(key).getAsBigDecimal();
 	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an BigDecimal value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return BigDecimal value or null
+	 ***********************************************************************/
+	public BigDecimal getBigDecimal(Object key, BigDecimal defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsBigDecimal(); }
+		
+		return defaultValue;
+	}
+	
 	
 	/***********************************************************************
 	 * Get the value for a specified key as an boolean value.
@@ -554,8 +662,21 @@ public class XRRecord {
 	 * @return Boolean value 
 	 ***********************************************************************/
 	public Boolean getBoolean(Object key) {
-		if(key == null) { return get(key).getAsBoolean(); }
-		return get(key.toString()).getAsBoolean();
+		return get(key).getAsBoolean();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as an boolean value.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return Boolean value 
+	 ***********************************************************************/
+	public Boolean getBoolean(Object key, Boolean defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsBoolean(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -565,8 +686,21 @@ public class XRRecord {
 	 * @return JsonArray value 
 	 ***********************************************************************/
 	public JsonArray getJsonArray(Object key) {
-		if(key == null) { return get(key).getAsJsonArray(); }
-		return get(key.toString()).getAsJsonArray();
+		return get(key).getAsJsonArray();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as a JsonArray.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return JsonArray value 
+	 ***********************************************************************/
+	public JsonArray getJsonArray(Object key, JsonArray defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsJsonArray(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -576,8 +710,35 @@ public class XRRecord {
 	 * @return JsonObject value 
 	 ***********************************************************************/
 	public JsonObject getJsonObject(Object key) {
-		if(key == null) { return get(key).getAsJsonObject(); }
-		return get(key.toString()).getAsJsonObject();
+		return get(key).getAsJsonObject();
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as a JsonObject.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return JsonObject value 
+	 ***********************************************************************/
+	public JsonObject getJsonObject(Object key, JsonObject defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsJsonObject(); }
+		
+		return defaultValue;
+	}
+	
+	/***********************************************************************
+	 * Get the value for a specified key as a JsonElement.
+	 * 
+	 * @param key name of value, key.toString() will be used to retrieve the value
+	 * @return JsonElement value 
+	 ***********************************************************************/
+	public JsonElement getJsonElement(Object key, JsonElement defaultValue) {
+		XRValue value = get(key);
+		
+		if( !value.isNull() ) { return value.getAsJsonElement(); }
+		
+		return defaultValue;
 	}
 	
 	/***********************************************************************
@@ -587,8 +748,7 @@ public class XRRecord {
 	 * @return JsonElement value 
 	 ***********************************************************************/
 	public JsonElement getJsonElement(Object key) {
-		if(key == null) { return get(key).getAsJsonElement(); }
-		return get(key.toString()).getAsJsonElement();
+		return get(key).getAsJsonElement();
 	}
 	
 	/***********************************************************************
