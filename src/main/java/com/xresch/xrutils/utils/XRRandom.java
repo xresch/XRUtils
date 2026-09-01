@@ -40,7 +40,7 @@ public class XRRandom {
 	
 	public static final String ALPHAS 	  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	public static final String ALPHA_NUMS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890";
-	public static final String ALPHA_NUMS_SPECIALS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890+*%&/()=?!{}[]><:;.,-_+*%&/()=?!{}[]><:;.,-_";
+	public static final String ALPHA_NUMS_SPECIALS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345678901234567890+*%&/()?!{}[]><:;.,-_+*%&/()?!{}[]><:;.,-_";
 		
 	private static final String[] firstnameGods = new String[] {"Zeus", "Hera", "Poseidon", "Cronus", "Aphrodite", "Hades", "Hephaestus", "Apollo", "Athena", "Artemis", "Ares", "Hermes", "Dionysus", "Persephone", "Eros", "Gaia", "Hypnos", "Rhea", "Uranus", "Nike", "Eos", "Pan", "Selene", "Helios", "Heracles", "Odysseus", "Jupiter", "Juno", "Neptune", "Saturn", "Venus", "Pluto", "Vulcan", "Ceres", "Apollo", "Minerva", "Diana", "Mars", "Mercury", "Bacchus", "Proserpine", "Cupid", "Terra", "Somnus", "Ops", "Uranus", "Victoria", "Aurora", "Faunus", "Luna", "Sol", "Hercules", "Ulysses"};
 	private static final String[] lastnameSweden = new String[] {"Andersson", "Johansson", "Karlsson", "Nilsson", "Eriksson", "Larsson", "Olsson", "Persson", "Svensson", "Gustafsson", "Pettersson", "Jonsson", "Jansson", "Hansson", "Bengtsson", "Joensson", "Lindberg", "Jakobsson", "Magnusson", "Olofsson", "Lindstroem", "Lindqvist", "Lindgren", "Axelsson", "Berg", "Bergstroem", "Lundberg", "Lind", "Lundgren", "Lundqvist", "Mattsson", "Berglund", "Fredriksson", "Sandberg", "Henriksson", "Forsberg", "Sjoeberg", "Wallin", "Engstroem", "Eklund", "Danielsson", "Lundin", "Hakansson", "Bjoerk", "Bergman", "Gunnarsson", "Holm", "Wikstroem", "Samuelsson", "Isaksson", "Fransson", "Bergqvist", "Nystroem", "Holmberg", "Arvidsson", "Loefgren", "Soederberg", "Nyberg", "Blomqvist", "Claesson", "Nordstroem", "Martensson", "Lundstroem", "Viklund", "Bjoerklund", "Eliasson"};
@@ -943,8 +943,9 @@ public class XRRandom {
 		StringBuilder builder = new StringBuilder();
 	
 		//Random random = getInstance();
+		int maxIndex = ALPHAS.length() - 1;
 		for (int i = 0; i < byteCount; i++) {
-			builder.append(ALPHAS.charAt(random.nextInt(51)));
+			builder.append(ALPHAS.charAt(random.nextInt(maxIndex)));
 		}
 	
 		return builder.toString();
@@ -962,8 +963,9 @@ public class XRRandom {
 		StringBuilder builder = new StringBuilder();
 	
 		//Random random = getInstance();
+		int maxIndex = ALPHA_NUMS.length() - 1;
 		for (int i = 0; i < byteCount; i++) {
-			builder.append(ALPHA_NUMS.charAt(random.nextInt(51)));
+			builder.append(ALPHA_NUMS.charAt(random.nextInt(maxIndex)));
 		}
 	
 		return builder.toString();
@@ -979,9 +981,9 @@ public class XRRandom {
 	
 		StringBuilder builder = new StringBuilder();
 	
-		//Random random = getInstance();
+		int maxIndex = ALPHA_NUMS_SPECIALS.length() - 1;
 		for (int i = 0; i < byteCount; i++) {
-			builder.append(ALPHA_NUMS_SPECIALS.charAt(random.nextInt(51)));
+			builder.append(ALPHA_NUMS_SPECIALS.charAt(random.nextInt(maxIndex)));
 		}
 	
 		return builder.toString();
