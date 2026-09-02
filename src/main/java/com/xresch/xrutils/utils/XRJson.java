@@ -35,9 +35,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.Strictness;
+import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
+import com.xresch.xrutils.json.SerializerInteger;
 import com.xresch.xrutils.json.TypeAdapterBigDecimal;
 import com.xresch.xrutils.json.XRSerializerResultSet;
 
@@ -57,8 +59,24 @@ public class XRJson {
 	
 	protected static Gson exposedOnlyInstance;
 
+	protected static HashMap<Class<?>, Object> typeAdapterRegistry = new HashMap<>();
+	
 	static{
-
+		initializeJsonInstances();
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	protected static void addTypeAdapter(Class<?> type, Object adapter) {
+		typeAdapterRegistry.put(type, adapter);
+	}
+	
+	/*************************************************************************************
+	 * initializes the Gson Instances
+	 *************************************************************************************/
+	protected static void initializeJsonInstances() {
+		
 		gsonInstance = createGsonBuilderBase()
 				.serializeNulls()
 				.setStrictness(Strictness.LENIENT)
@@ -76,19 +94,24 @@ public class XRJson {
 				.setStrictness(Strictness.LENIENT)
 				.create();
 	}
-			
-	
-
 	
 	/*************************************************************************************
 	 * 
 	 *************************************************************************************/
 	protected static GsonBuilder createGsonBuilderBase() {
-		return new GsonBuilder()
+		GsonBuilder builder = new GsonBuilder()
 				.registerTypeAdapter(BigDecimal.class, new TypeAdapterBigDecimal())
+				.registerTypeAdapter(Integer.class, new SerializerInteger())
 				//.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal())
 				.registerTypeHierarchyAdapter(ResultSet.class, new XRSerializerResultSet())
 				;
+		
+		// add all registered Type Adapters
+		for(Entry<Class<?>, Object> entry : typeAdapterRegistry.entrySet()) {
+			builder.registerTypeHierarchyAdapter(entry.getKey(), entry.getValue());
+		}
+		
+		return builder;
 	}
 	/*************************************************************************************
 	 * 
