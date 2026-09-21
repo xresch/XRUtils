@@ -320,9 +320,9 @@ public class XRJson {
 	}
 	
 	/*************************************************************************************
-	 * Converts a json string to a LinkedHashMap 
+	 * Converts a json string to a LinkedHashMap<String,String> 
 	 *************************************************************************************/
-	public static LinkedHashMap<String,String> fromJsonLinkedHashMap(String jsonString) {
+	public static LinkedHashMap<String,String> fromJsonToLinkedHashMap(String jsonString) {
 
 		Type type = new TypeToken<LinkedHashMap<String,String>>(){}.getType();
 		LinkedHashMap<String,String> clonedMap = gsonInstance.fromJson(jsonString, type); 
@@ -330,14 +330,25 @@ public class XRJson {
 	}
 	
 	/*************************************************************************************
-	 * Converts a json string to a LinkedHashMap 
+	 * Converts a json string to a LinkedHashMap<String,String> 
 	 *************************************************************************************/
-	public static LinkedHashMap<String,String> fromJsonLinkedHashMap(JsonObject zeObject) {
+	public static LinkedHashMap<String,String> fromJsonToLinkedHashMap(JsonObject zeObject) {
 
 		Type type = new TypeToken<LinkedHashMap<String,String>>(){}.getType();
 		LinkedHashMap<String,String> zeMap = gsonInstance.fromJson(zeObject, type); 
 		return zeMap;
 	}
+	
+	/*************************************************************************************
+	 * Converts a json string to a ArrayList<String> 
+	 *************************************************************************************/
+	public static ArrayList<String> fromJsonToArrayList(String jsonString) {
+		
+		Type type = new TypeToken<ArrayList<String>>(){}.getType();
+		ArrayList<String> clonedMap = gsonInstance.fromJson(jsonString, type); 
+		return clonedMap;
+	}
+
 	
 	/*************************************************************************************
 	 * Converts a HashMap to a JsonArray like [{ value: "value", label: "label"}, ...].
