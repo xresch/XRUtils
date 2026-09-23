@@ -79,15 +79,25 @@ public class XRDBInterface {
 				.trace("DB Connections Active: "+pooledSource.getNumActive());
 		}
 		
+		//-----------------------------
+		// Check transaction started
 		if(transactionConnection.get() != null) {
-			return transactionConnection.get();
-		}else {
-			synchronized (pooledSource) {
-				Connection connection = pooledSource.getConnection();
-				addOpenConnection(connection);
-				return connection;
+			Connection conn = transactionConnection.get();
+			if(! conn.isClosed() ) {
+				return transactionConnection.get();
+			}else {
+				transactionConnection.set(null);
 			}
-		}				
+		}
+		
+		//-----------------------------
+		// Return new connection
+		synchronized (pooledSource) {
+			Connection connection = pooledSource.getConnection();
+			addOpenConnection(connection);
+			return connection;
+		}
+						
 	}
 	
 	
