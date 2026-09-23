@@ -1,5 +1,6 @@
 package com.xresch.xrutils.database;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -8,10 +9,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.sql.DataSource;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.xresch.xrutils.base.XR;
 
 /**************************************************************************************************************
  * Database interface class.
@@ -36,10 +40,10 @@ public class XRDBInterface {
 	protected ThreadLocal<ArrayList<Connection>> myOpenConnections = new ThreadLocal<>();
 	protected ThreadLocal<Connection> transactionConnection = new ThreadLocal<>();
 
-	private BasicDataSource pooledSource;
+	protected BasicDataSource pooledSource;
 	
 
-	private static HashMap<String, BasicDataSource> managedConnectionPools = new HashMap<>();
+	protected static HashMap<String, BasicDataSource> managedConnectionPools = new HashMap<>();
 	
 	public XRDBInterface(BasicDataSource pooledSource) {
 		this.pooledSource = pooledSource;
@@ -52,6 +56,13 @@ public class XRDBInterface {
 	 ********************************************************************************************/
 	public DataSource getDatasource() {
 		return pooledSource;
+	}
+	
+	/********************************************************************************************
+	 * Method that can be overridden to count DB calls.
+	 ********************************************************************************************/
+	protected void increaseDBCallsCount(Connection conn, boolean isError) {
+		return;
 	}
 	
 	/********************************************************************************************
@@ -140,7 +151,7 @@ public class XRDBInterface {
 	 * 
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	protected void addOpenConnection(Connection connection) {	
+	public void addOpenConnection(Connection connection) {	
 		if(myOpenConnections.get() == null) {
 			myOpenConnections.set(new ArrayList<Connection>());
 		}
@@ -155,7 +166,7 @@ public class XRDBInterface {
 	 * 
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	protected void removeOpenConnection(Connection connection) {	
+	public void removeOpenConnection(Connection connection) {	
 		
 		if(myOpenConnections.get() == null) {
 			return;
@@ -326,10 +337,10 @@ public class XRDBInterface {
 			if(!isResultSet && prepared.getUpdateCount() > 0) {
 				result = true;
 			}
-			
+			increaseDBCallsCount(conn, false);
 			
 		} catch (SQLException e) {
-			
+			increaseDBCallsCount(conn, true);
 			logger.error("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
@@ -346,6 +357,58 @@ public class XRDBInterface {
 		
 		logger.trace("SQL Statement: "+sql);
 		return result;
+	}
+	
+	/********************************************************************************************
+	 * 
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @return int number of updated rows, -1 in case of error
+	 ********************************************************************************************/
+	public int unpreparedExecuteBatch(String sql){	
+		
+		int totalRows = -1;
+		
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		
+		try {
+			//-----------------------------------------
+			// Initialize Variables
+			conn = this.getConnection();
+			Statement statement = conn.createStatement();
+			statement.addBatch(sql);
+
+			//-----------------------------------------
+			// Execute
+			int[] resultCounts = statement.executeBatch();
+			
+			for(int i : resultCounts) {
+				if(i >= 0) {
+					totalRows += i;
+				}
+			}
+			increaseDBCallsCount(conn, false);
+			
+		} catch (SQLException e) {
+			increaseDBCallsCount(conn, true);
+			logger.error("Database Error: "+e.getMessage(), e);
+		} finally {
+			try {
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e) {
+				logger.error("Issue closing resources.", e);
+			}
+			
+		}
+		
+		logger.trace("SQL: "+sql);
+		
+		return totalRows;
 	}
 	
 	/********************************************************************************************
@@ -368,7 +431,7 @@ public class XRDBInterface {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			XRDBInterface.prepareStatement(prepared, values);
+			prepareStatement(prepared, values);
 			prepared.addBatch();
 			
 			//-----------------------------------------
@@ -381,11 +444,11 @@ public class XRDBInterface {
 					totalRows += i;
 				}
 			}
-			
+			increaseDBCallsCount(conn, false);
 			return totalRows;
 			
 		} catch (SQLException e) {
-			
+			increaseDBCallsCount(conn, true);
 			logger.error("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
@@ -438,9 +501,9 @@ public class XRDBInterface {
 				result.next();
 				generatedID = result.getInt(generatedKeyName);
 			}
-			
+			increaseDBCallsCount(conn, false);
 		} catch (SQLException e) {
-			
+			increaseDBCallsCount(conn, true);
 			logger.error("Database Error: "+e.getMessage(), e);
 		} finally {
 			try {
@@ -469,27 +532,16 @@ public class XRDBInterface {
 		return preparedExecuteQuery(false, sql, values);
 	}
 	
-	/********************************************************************************************
-	 * Returns the result or null if there was any issue.
-	 * Errors will be written to log but not be propagated to client.
-	 * 
-	 * @param sql string with placeholders
-	 * @param values the values to be placed in the prepared statement
-	 * @throws SQLException 
-	 ********************************************************************************************/
-	public ResultSet preparedExecuteQuerySilent(String sql, Object... values){
-		return preparedExecuteQuery(true, sql, values);
-	}
 	
 	/********************************************************************************************
 	 * Returns the result or null if there was any issue.
 	 * 
-	 * @param isSilent write errors to log but do not propagate to client
+	 * @param isSilent legacy parameter, will be used by overriding methods to turn certain logs silent
 	 * @param sql string with placeholders
 	 * @param values the values to be placed in the prepared statement
 	 * @throws SQLException 
 	 ********************************************************************************************/
-	private ResultSet preparedExecuteQuery(boolean isSilent, String sql, Object... values){	
+	protected ResultSet preparedExecuteQuery(boolean isSilent, String sql, Object... values){	
         		
 		Connection conn = null;
 		PreparedStatement prepared = null;
@@ -502,14 +554,16 @@ public class XRDBInterface {
 			
 			//-----------------------------------------
 			// Prepare Statement
-			XRDBInterface.prepareStatement(prepared, values);
+			prepareStatement(prepared, values);
 			
 			//-----------------------------------------
 			// Execute
 			result = prepared.executeQuery();
+			increaseDBCallsCount(conn, false);
 			
 		} catch (SQLException e) {
 			
+			increaseDBCallsCount(conn, true);
 			logger.error("Issue executing prepared statement: "+e.getLocalizedMessage(), e);
 			try {
 				if(conn != null && transactionConnection.get() == null) { 
@@ -526,7 +580,155 @@ public class XRDBInterface {
 				 
 		return result;
 	}
+	
+	/********************************************************************************************
+	 * Returns the CFWResultSet.
+	 * Note: This adjusted copy of preparedExecuteQuery() is very similar. Because of performance
+	 * it was decided to accept this kind of code redundancy.
+	 * 
+	 * @param isSilent write errors to log but do not propagate to client
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 ********************************************************************************************/
+	public XRResultSet preparedExecuteQueryXRResultSet(boolean isSilent, String sql, Object... values){	
+        		
+		Connection conn = null;
+		PreparedStatement prepared = null;
+		ResultSet result = null;
+		try {
+			//-----------------------------------------
+			// Initialize Variables
+			conn = this.getConnection();
+			prepared = conn.prepareStatement(sql);
+			
+			//-----------------------------------------
+			// Prepare Statement
+			prepareStatement(prepared, values);
+			
+			//-----------------------------------------
+			// Execute
+			result = prepared.executeQuery();
+			increaseDBCallsCount(conn, false);
+			
+			XRResultSet xrResult = new XRResultSet(this, true);
+			
+			xrResult.connection(conn)
+				     .isSilent(isSilent)
+					 .resultSet(result) 
+					 .preparedStatement(prepared) 
+					 .sqlString(sql)
+					 .values(values) 
+					 .executionResult(true) 
+					 .updateCount(-1) 
+					 ;
+			
+			return xrResult;
+			
+		} catch (SQLException e) {
+			increaseDBCallsCount(conn, true);
+			logger.error("Issue executing prepared statement: "+e.getLocalizedMessage(), e);
+			try {
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e2) {
+				logger.error("Issue closing resources.", e2);
+			}
+		} 
+		
+		logger.trace("SQL: "+sql);
+				 
+		return new XRResultSet(this, false);
+	}
 
+	/********************************************************************************************
+	 * Returns the CFWResultSet.
+	 * Note: This adjusted copy of preparedExecute() is very similar. Because of performance
+	 * it was decided to accept this kind of code redundancy.
+	 * 
+	 * @param request HttpServletRequest containing session data used for logging information(null allowed).
+	 * @param sql string with placeholders
+	 * @param values the values to be placed in the prepared statement
+	 * @return true if update count is > 0, false otherwise
+	 ********************************************************************************************/
+	public XRResultSet preparedExecuteXRResultSet(String sql, Object... values){	
+        
+		Connection conn = null;
+		PreparedStatement prepared = null;
+				
+		try {
+			//-----------------------------------------
+			// Initialize Variables
+			conn = this.getConnection();
+			
+			prepared = conn.prepareStatement(sql);
+			
+			//-----------------------------------------
+			// Prepare Statement
+			prepareStatement(prepared, values);
+			
+			//-----------------------------------------
+			// Execute
+			boolean isResultSet = prepared.execute();
+			int  updateCount = prepared.getUpdateCount();
+			boolean result = false;
+			
+			if(!isResultSet && updateCount > 0) {
+				result = true;
+			}
+			increaseDBCallsCount(conn, false);
+			
+			XRResultSet xrResult = new XRResultSet(this, true);
+			
+			xrResult.connection(conn)
+					 .isResultSet(isResultSet) 
+					 .preparedStatement(prepared) 
+					 .sqlString(sql)
+					 .values(values) 
+					 .executionResult(result) 
+					 .updateCount(updateCount ) 
+					 ;
+
+			logger.trace("SQL: "+sql);
+			return xrResult;
+			
+		} catch (SQLException e) {
+			increaseDBCallsCount(conn, true);
+			logger.error("Database Error: "+e.getMessage(), e);
+			
+			try {
+				if(conn != null && transactionConnection.get() == null) { 
+					removeOpenConnection(conn);
+					conn.close(); 
+				}
+				if(prepared != null) { prepared.close(); }
+			} catch (SQLException e2) {
+				logger.error("Issue closing resources.", e2);
+			}
+		} 
+		
+		logger.trace("SQL: "+sql);
+		return new XRResultSet(this, false);
+	}
+
+	/********************************************************************************************
+	 * Prepares custom types for the SQL statement.
+	 * This method can be overriden to add support for custom type conversion.
+	 * 
+	 * @param prepared the statements with ?-placeholders that should be prepared
+	 * @param value the value to be placed in the prepared statement. Supports String, Integer,
+	 *               Boolean, Float, Date, Timestamp, Blob, Clob, Byte
+	 * @throws SQLException 
+	 * 
+	 * @return true if value was prepared, false otherwise
+	 ********************************************************************************************/
+	public boolean prepareCustomTypes(PreparedStatement prepared, int index, Object currentValue) throws SQLException{
+			
+		return false;
+		
+	}
 	/********************************************************************************************
 	 * Adds the values to the prepared statement.
 	 * 
@@ -536,7 +738,7 @@ public class XRDBInterface {
 	 * @throws SQLException 
 	 ********************************************************************************************/
 	@SuppressWarnings("rawtypes")
-	public static void prepareStatement(PreparedStatement prepared, Object... values) throws SQLException{
+	public void prepareStatement(PreparedStatement prepared, Object... values) throws SQLException{
 		
 		try {
 			if(values != null) {
@@ -559,18 +761,23 @@ public class XRDBInterface {
 					else if (currentValue instanceof Clob) 			{ prepared.setClob(i, (Clob)currentValue); }
 					else if (currentValue instanceof Byte) 			{ prepared.setByte(i, (Byte)currentValue); }
 					else if (currentValue instanceof ArrayList) 	{ prepared.setArray(i, prepared.getConnection().createArrayOf("VARCHAR", ((ArrayList)currentValue).toArray() )); }
-					else if (currentValue instanceof Integer[]) 		{ prepared.setArray(i, prepared.getConnection().createArrayOf("INTEGER", (Integer[])currentValue)); }
+					else if (currentValue instanceof InputStream) 	{ prepared.setBinaryStream(i, (InputStream)currentValue); }
+					else if (currentValue instanceof Integer[]) 	{ prepared.setArray(i, prepared.getConnection().createArrayOf("INTEGER", (Integer[])currentValue)); }
 					else if (currentValue instanceof Object[]) 		{ prepared.setArray(i, prepared.getConnection().createArrayOf("VARCHAR", (Object[])currentValue)); }
-					//else if (currentValue instanceof LinkedHashMap)	{ prepared.setString(i, (currentValue)); }
+					else if (currentValue instanceof LinkedHashMap)	{ prepared.setString(i, XR.JSON.toJSON(currentValue)); }
 					else if (currentValue.getClass().isEnum()) 		{ prepared.setString(i, currentValue.toString());}
-					else { throw new RuntimeException("Unsupported database field type: "+ currentValue.getClass().getName());}
+					else if ( prepareCustomTypes(prepared, i, currentValue) )	{ /* prepare successful, do nothing */  }
+					else { 
+						logger.warn("SQL prepared statement type set as object: " + currentValue.getClass().getName());
+						prepared.setObject(i, currentValue);
+					}
 				}
 			}
 		}catch(Exception e){
 			//do this to also log below when an error occurs
 			throw e;
 		}finally {
-			logger.trace("Debug: Prepared Statement");
+			logger.trace("Debug: Prepared Statement: "+prepared.toString());
 		}
 
 	}
