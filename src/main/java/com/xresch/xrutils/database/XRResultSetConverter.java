@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.xresch.xrutils.base.XR;
+import com.xresch.xrutils.data.XRRecord;
 
 /**************************************************************************************************************
  * Utility class used to convert a result set.
@@ -108,6 +109,19 @@ public class XRResultSetConverter {
 		}
 		
 		return null;
+		
+	}
+	
+	/****************************************************************
+	 * Executes the query and returns the first result as XRRecord.
+	 * 
+	 * @return XRRecord or null if no rows are selected or in case of errors
+	 ****************************************************************/
+	public XRRecord getFirstAsXRRecord() {
+		
+		XRResultSetAsXRRecordReader reader = toXRRecordReader();
+		
+		return reader.next();
 		
 	}
 
@@ -337,6 +351,14 @@ public class XRResultSetConverter {
 	 ********************************************************************************************/
 	public XRResultSetAsJsonReader toJSONReader() {
 		return new XRResultSetAsJsonReader(result);
+	}
+	
+	/********************************************************************************************
+	 * Returns a ResultSetAsJsonReader to convert SQL records to json objects one by one. 
+	 * 
+	 ********************************************************************************************/
+	public XRResultSetAsXRRecordReader toXRRecordReader() {
+		return new XRResultSetAsXRRecordReader(result);
 	}
 	
 	/***************************************************************************

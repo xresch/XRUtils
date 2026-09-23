@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.security.cert.X509Certificate;
+import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
@@ -35,7 +36,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.Strictness;
-import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
@@ -582,21 +582,29 @@ public class XRJson {
 	 * 
 	 *************************************************************************************/
 	public static void addObject(JsonObject target, String propertyName, Object object) {
-		if(object instanceof String) 			{	target.addProperty(propertyName, (String)object); }
-		else if(object instanceof JsonElement) 	{	target.add(propertyName, (JsonElement)object); }
-		else if(object instanceof Number) 		{	target.addProperty(propertyName, (Number)object); }
-		else if(object instanceof Boolean) 		{	target.addProperty(propertyName, (Boolean)object); }
-		else if(object instanceof Character) 	{	target.addProperty(propertyName, (Character)object); }
-		else if(object instanceof Date) 		{	target.addProperty(propertyName, ((Date)object).getTime()); }
-		else if(object instanceof Clob) 		{	target.addProperty(propertyName, ((Clob)object).toString()); }
-		else if(object instanceof Blob) 		{	target.addProperty(propertyName, ((Blob)object).toString()); }
-		else if(object instanceof Timestamp) 	{	target.addProperty(propertyName, ((Timestamp)object).getTime()); }
-		else if(object instanceof OffsetDateTime) {	target.addProperty(propertyName, ((OffsetDateTime)object).toInstant().toEpochMilli()); }
-		else if(object instanceof Object[]) 	{	target.add(propertyName, arrayToJsonArray((Object[])object)); }
-		else if(object instanceof ArrayList) 	{	target.add(propertyName, arrayToJsonArray((ArrayList)object)); }
+		target.add(propertyName, valueToJson(object) ); 
+	}
+	
+	/*************************************************************************************
+	 * 
+	 *************************************************************************************/
+	public static JsonElement valueToJson(Object object) {
+		if(object instanceof String) 			{	return new JsonPrimitive( (String)object ); }
+		else if(object instanceof JsonElement) 	{	return (JsonElement)object; }
+		else if(object instanceof Number) 		{	return new JsonPrimitive( (Number)object); }
+		else if(object instanceof Boolean) 		{	return new JsonPrimitive((Boolean)object); }
+		else if(object instanceof Character) 	{	return new JsonPrimitive((Character)object); }
+		else if(object instanceof Date) 		{	return new JsonPrimitive( ((Date)object).getTime() ); }
+		else if(object instanceof Clob) 		{	return new JsonPrimitive( ((Clob)object).toString() ); }
+		else if(object instanceof Blob) 		{	return new JsonPrimitive( ((Blob)object).toString() ); }
+		else if(object instanceof Timestamp) 	{	return new JsonPrimitive( ((Timestamp)object).getTime() ); }
+		else if(object instanceof OffsetDateTime) {	return new JsonPrimitive( ((OffsetDateTime)object).toInstant().toEpochMilli() ); }
+		else if(object instanceof Object[]) 	{	return arrayToJsonArray((Object[])object); }
+		else if(object instanceof ArrayList) 	{	return arrayToJsonArray((ArrayList<?>)object); }
+		//else if(object instanceof Array) 		{	return arrayToJsonArray( (Object[]) ((Array)object).getArray() ); }
 		else {	
 			
-			target.add(propertyName, gsonInstance.toJsonTree(object)); 
+			return gsonInstance.toJsonTree(object); 
 		}
 	}
 	
