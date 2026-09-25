@@ -701,7 +701,11 @@ public class XRValue implements Comparable<XRValue> {
 
 			case BOOLEAN: 	return new JsonPrimitive((Boolean)value);
 			
-			case STRING:	return new JsonPrimitive((String)value);
+			case STRING:	if( XRValue.checkIsJsonParsable((String)value) ) { 
+								return XR.JSON.fromJson((String)value);
+							}else {
+								return new JsonPrimitive((String)value);
+							}
 			
 			case NULL:	return JsonNull.INSTANCE;
 			
@@ -740,8 +744,19 @@ public class XRValue implements Comparable<XRValue> {
 							object.addProperty("value", (Boolean)value);
 							break; 
 							
-			case STRING:	object.addProperty("type", "string");
-							object.addProperty("value", (String)value);
+			case STRING:	if( XRValue.checkIsJsonParsable((String)value) ) { 
+								JsonElement tempElement = XR.JSON.fromJson( (String)value );
+								if(tempElement.isJsonObject()) {
+									object = tempElement.getAsJsonObject();
+								}else if(tempElement.isJsonArray()) {
+									
+									object.addProperty("type", "array");
+									object.add("value", tempElement);
+								}
+							}else {
+								object.addProperty("type", "string");
+								object.addProperty("value", (String)value);
+							}
 							break; 
 						
 			case NULL:		object.addProperty("type", "null");

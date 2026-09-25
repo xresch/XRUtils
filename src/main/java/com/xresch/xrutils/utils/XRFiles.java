@@ -1,23 +1,33 @@
 package com.xresch.xrutils.utils;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +36,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -484,7 +497,203 @@ public class XRFiles {
 		}
 		
 	}
+
+
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	private static void extractFile(ZipInputStream in, File outdir, String name) throws IOException {
+		
+		int BUFFER_SIZE = 4096;
+		
+		byte[] buffer = new byte[BUFFER_SIZE];
+		
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(outdir, name)));
+		int count = -1;
+		while ((count = in.read(buffer)) != -1)
+			out.write(buffer, 0, count);
+		out.close();
+		
+	}
+
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	private static void mkdirs(File outdir, String path) {
+		File d = new File(outdir, path);
+		if (!d.exists()) {
+			d.mkdirs();
+		}
+	}
+
+
+	/********************************************************************************************
+	 * Extract zipfile to toDir with complete directory structure
+	 * 
+	 * @param zipFileUri Input .zip file
+	 * @param toDir the output directory
+	 ********************************************************************************************/
+	public static void extractZipFile(URI zipFileUri, String toDir) {
+		
+	    FileSystem zipFs;
+		try {
+			zipFs = FileSystems.newFileSystem(zipFileUri, new HashMap<String, String>());
+		
+		    final Path pathInZip = zipFs.getPath("./");
+		    final Path targetDir = Paths.get(toDir);
+		    
+		    Files.walkFileTree(pathInZip, new SimpleFileVisitor<Path>() {
+		        @Override
+		        public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) throws IOException {
+		            // Make sure that we conserve the hierachy of files and folders inside the zip
+		            Path relativePathInZip = pathInZip.relativize(filePath);
+		            Path targetPath = targetDir.resolve(relativePathInZip.toString());
+		            Files.createDirectories(targetPath.getParent());
+		
+		            // And extract the file
+		            Files.copy(filePath, targetPath);
+		
+		            return FileVisitResult.CONTINUE;
+		        }
+		    });
+	    
+		} catch (IOException e) {
+			logger.error("Issue extracting zip file: "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
 	
+	/********************************************************************************************
+	 * Extract zipfile to outdir with complete directory structure
+	 * 
+	 * @param zipInputStream input stream for the .zip file
+	 * @param targetDir the output directory
+	 ********************************************************************************************/
+	public static void extractZipFile(ZipInputStream zipInputStream, String targetDir) {
+		try {
+						
+			File outdir = new File(targetDir);
+			
+			if (!outdir.exists())
+				outdir.mkdirs();
+			
+			ZipEntry entry = null;
+			
+			while ((entry = zipInputStream.getNextEntry()) != null) {
+
+				String filePath = entry.getName();
+				
+				if (entry.isDirectory()) {
+					mkdirs(outdir, filePath);
+					continue;
+				}
+				
+				//Create directories 
+				new File(targetDir+"/"+filePath).getParentFile().mkdirs();
+
+				extractFile(zipInputStream, outdir, filePath);
+			}
+			
+		} catch (IOException e) {
+			logger.error( "Error extracting zip file", e);
+			e.printStackTrace();
+		}finally{
+			try {
+				zipInputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void deleteRecursively(String fileOrDirectoryPath){
+		deleteRecursively(new File(fileOrDirectoryPath));
+	}
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void deleteRecursively(File fileOrDirectory){
+		
+		if (fileOrDirectory.isDirectory()) {
+			
+			try {
+				FileUtils.deleteDirectory(fileOrDirectory);
+			} catch (IOException e) {
+				logger.error( "Error occured deleting directory '"+fileOrDirectory.getPath()+"'.", e);
+				e.printStackTrace();
+			}
+	
+		}
+	
+	}
+	
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void copyRecursively(String sourceDir,String targetDir){
+
+		try {
+			FileUtils.copyDirectory(new File(sourceDir), new File(targetDir));
+		} catch (IOException e) {
+			logger.error( "Error occured copying directory '"+sourceDir+"' to '"+targetDir+"'.", e);
+			e.printStackTrace();
+		}
+	}
+	
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void copyFile(File sourceFile,String targetFilePath){
+
+		try {
+			FileUtils.copyFile(sourceFile, new File(targetFilePath));
+		} catch (IOException e) {
+			logger.error( "Error occured copying file '"+sourceFile.getPath()+"' to '"+targetFilePath+"'.", e);
+			e.printStackTrace();
+		}
+	}
+	
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void writeStringToFile(String directory,String filename, String fileContent){
+		String filepath = directory+"/"+filename;
+		
+		try {
+			Files.createDirectories(Paths.get(directory));
+			Files.write(Paths.get(filepath), fileContent.getBytes());
+
+		} catch (IOException e) {
+			logger.error( "Error occured writing file '"+filepath+"'.", e);
+			e.printStackTrace();
+		}
+
+	}
+	
+	/********************************************************************************************
+	 * 
+	 ********************************************************************************************/
+	public static void replaceInFile(String filepath, String replace, String replacement){
+	
+		Path path = Paths.get(filepath);
+		Charset charset = StandardCharsets.UTF_8;
+	
+		String content;
+		try {
+			content = new String(Files.readAllBytes(path), charset);
+			content = content.replace(replace, replacement);
+			Files.write(path, content.getBytes(charset));
+			
+		} catch (IOException e) {
+			logger.error("Error replacing in file'"+filepath+"'.", e);
+			e.printStackTrace();
+		}
+
+	}
 	/***********************************************************************
 	 * Recursively copies files into a target folder.
 	 * If file is a file, copies the file to the target.

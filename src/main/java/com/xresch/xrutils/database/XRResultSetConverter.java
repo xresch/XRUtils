@@ -382,6 +382,25 @@ public class XRResultSetConverter {
 		
 	}
 	
+	/***************************************************************************
+	 * Converts a ResultSet into a JsonArray.
+	 * @return list of maps holding key(column name) with values
+	 ***************************************************************************/
+	public ArrayList<XRRecord> toXRRecordList() {
+		
+		ArrayList<XRRecord> result = new ArrayList<XRRecord>();
+				
+		XRResultSetAsXRRecordReader reader = toXRRecordReader();
+		
+		XRRecord record;
+		while( (record = reader.next()) != null) {
+			result.add(record);
+		}
+
+		return result;
+		
+	}
+	
 	
 
 	/********************************************************************************************
