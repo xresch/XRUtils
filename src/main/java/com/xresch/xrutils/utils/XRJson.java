@@ -41,6 +41,7 @@ import com.google.gson.stream.JsonReader;
 import com.xresch.xrutils.json.JsonArrayListView;
 import com.xresch.xrutils.json.SerializerInteger;
 import com.xresch.xrutils.json.TypeAdapterBigDecimal;
+import com.xresch.xrutils.json.TypeAdapterSLF4JLogger;
 import com.xresch.xrutils.json.XRSerializerResultSet;
 
 /**************************************************************************************************************
@@ -100,6 +101,7 @@ public class XRJson {
 	 *************************************************************************************/
 	protected static GsonBuilder createGsonBuilderBase() {
 		GsonBuilder builder = new GsonBuilder()
+				.registerTypeAdapter(Logger.class, new TypeAdapterSLF4JLogger())
 				.registerTypeAdapter(BigDecimal.class, new TypeAdapterBigDecimal())
 				.registerTypeAdapter(Integer.class, new SerializerInteger())
 				//.registerTypeHierarchyAdapter(BigDecimal.class, new SerializerBigDecimal())
