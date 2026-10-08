@@ -127,6 +127,8 @@ public class XRResultSet {
 	
 	/***********************************************************************************
 	 * Streams bytes from a column to the defined output stream.
+	 * This method will NOT close the output stream when done.
+	 * 
 	 * @param columnName name of the column
 	 * @param out the output stream
 	 * @return true if successful or when result was empty, false on errors
@@ -142,12 +144,16 @@ public class XRResultSet {
 			ResultSet resultSet = prepared.getResultSet();
 			
 			 while (resultSet.next()) {
-                InputStream input = resultSet.getBinaryStream(columnName.toString());
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = input.read(buffer)) > 0) {
-                    out.write(buffer, 0, bytesRead);
-                }
+				 
+				try( InputStream input = resultSet.getBinaryStream(columnName.toString()) ){
+               
+	                byte[] buffer = new byte[1024];
+	                int bytesRead;
+	                while ((bytesRead = input.read(buffer)) > 0) {
+	                    out.write(buffer, 0, bytesRead);
+	                }
+				}
+
             }
 	           return true;
 			
