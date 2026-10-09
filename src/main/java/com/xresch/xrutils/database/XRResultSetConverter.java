@@ -121,8 +121,25 @@ public class XRResultSetConverter {
 		
 		XRResultSetAsXRRecordReader reader = toXRRecordReader();
 		
-		return reader.next();
+		XRRecord record = reader.next();
+		reader.close();
 		
+		return record;
+	}
+	
+	/****************************************************************
+	 * Executes the query and returns the first result as JsonObject.
+	 * 
+	 * @return JsonObject or null if no rows are selected or in case of errors
+	 ****************************************************************/
+	public JsonObject getFirstAsJsonObject() {
+		
+		XRResultSetAsJsonReader reader = toJSONReader();
+		
+		JsonObject record = reader.next();
+		reader.close();
+		
+		return record;
 	}
 
 	

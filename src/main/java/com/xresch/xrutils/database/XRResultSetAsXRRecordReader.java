@@ -73,16 +73,24 @@ public class XRResultSetAsXRRecordReader {
 			}else {
 				//-------------------------
 				// end of results
-				XRResultSetUtils.close(resultSet);
+				close();
 				return null;
 			}
 		} catch (SQLException e) {
-			XRResultSetUtils.close(resultSet);
+			close();
 			XRResultSetUtils.logger.error("Error while reading SQL results:"+e.getMessage(), e);
 		}
 		
 		//return null in case of error;
 		return null;
+	}
+	
+	
+	/****************************************************************
+	 * Close the result set associated with this reader.
+	 ****************************************************************/
+	public void close() {
+		XRResultSetUtils.close(resultSet);
 	}
 	
 }

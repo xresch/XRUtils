@@ -41,8 +41,9 @@ public class XRResultSetUtils {
 				
 				if(!resultSet.getStatement().getConnection().isClosed()) {
 					resultSet.getStatement().getConnection().close();
-					resultSet.close();
 				}
+				
+				resultSet.close();
 			}
 		} catch (SQLException e) {
 			logger.error("Exception occured while closing ResultSet. ", e);
