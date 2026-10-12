@@ -9,15 +9,18 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -950,6 +953,113 @@ public class XRRandom {
 	
 		return builder.toString();
 	
+	}
+	
+
+	public static String[] otpNumberPatterns = {
+					  "122222", "123123", "123321"
+					, "121212", "111222", "112233"
+					, "123312", "111234", "234111"
+					, "122221", "121121", "112112"
+					, "111122", "112222", "122111"
+					, "112211", "111221", "122211"
+					, "112221", "121233", "331212"
+					, "133212", "123312", "121332"
+					, "121233"
+					};
+	
+	/******************************************************************************
+	 * Creates a random number OTP of 6 digits zero to nine, which is based on 
+	 * various patterns which makes most OTPs easier to remember for ze human 
+	 * beings.
+	 * 
+	 * @param patternChancePercent chance in percent (0-100) that a pattern is used.
+	 * @return String 6 digit OTP, returns a string to make sure we have six digits
+	 ******************************************************************************/
+	public static String patternedOTPNumbers(int patternChancePercent) {
+		char[] characters = "0123456789".toCharArray();
+		return patternedOTP(characters, patternChancePercent);
+	}
+	
+	/******************************************************************************
+	 * Creates a random number OTP of 6 characters A to Z, which is based on 
+	 * various patterns which makes most OTPs easier to remember for ze human 
+	 * beings.
+	 * 
+	 * @param patternChancePercent chance in percent (0-100) that a pattern is used.
+	 * @return String 6 digit OTP, returns a string to make sure we have six digits
+	 ******************************************************************************/
+	public static String patternedOTPAlphas(int patternChancePercent) {
+		char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		return patternedOTP(characters, patternChancePercent);
+	}
+	
+	/******************************************************************************
+	 * Creates a random number OTP of 6 characters A to Z and 0 to 9, which is based on 
+	 * various patterns which makes most OTPs easier to remember for ze human 
+	 * beings.
+	 * 
+	 * @param patternChancePercent chance in percent (0-100) that a pattern is used.
+	 * @return String 6 digit OTP, returns a string to make sure we have six digits
+	 ******************************************************************************/
+	public static String patternedOTPAlphaNums(int patternChancePercent) {
+		char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789".toCharArray();
+		return patternedOTP(characters, patternChancePercent);
+	}
+	
+	/******************************************************************************
+	 * Creates a random number OTP of 6 characters, eiter 0 - 9 | A- Z | A - Z and 0 - 9.
+	 * This is based on various patterns which makes most OTPs easier to remember for ze human 
+	 * beings.
+	 * 
+	 * @param patternChancePercent chance in percent (0-100) that a pattern is used.
+	 * @return String 6 digit OTP, returns a string to make sure we have six digits
+	 ******************************************************************************/
+	public static String patternedOTPMixed(int patternChancePercent) {
+		
+		int percent = integer(0,100);
+		
+		if(percent < 33) 		{ return patternedOTPNumbers(patternChancePercent); }
+		else if(percent < 66) 	{ return patternedOTPAlphas(patternChancePercent); }
+		else 					{ return patternedOTPAlphaNums(patternChancePercent); }
+
+	}
+		
+	/******************************************************************************
+	 * Creates a random number OTP of 6 characters, which is based on 
+	 * various patterns which makes most OTPs easier to remember for ze human 
+	 * beings.
+	 * 
+	 * @param characterArray array of characters that should be used in the OTP
+	 * @param patternChancePercent chance in percent (0-100) that a pattern is used.
+	 * @return String 6 digit OTP, returns a string to make sure we have six digits
+	 ******************************************************************************/
+	public static <T> String patternedOTP(char[] characterArray, int patternChancePercent) {
+		
+		randomizeOrder(characterArray);
+		
+		//-----------------------------
+		// Use Pattern 50% of the time
+		String pattern = "123456"; // no pattern, fully random
+		if(patternChancePercent > integer(0, 100)) {
+			pattern = fromArray(otpNumberPatterns);
+		}
+		
+		//-----------------------------
+		// Use Pattern 50% of the time
+		
+		// use 7 char lowercase "abcdxyz" with negative lookbehind to not replace already replaced characters
+		final String sevenChars = "abcdxyz";
+		final String regexPrefix = "(?<!"+sevenChars+")";
+		
+		for(int i = 0; i < characterArray.length; i++) {
+			Matcher matcher = XR.Text.getRegexMatcherCached(regexPrefix+i, pattern);
+			pattern = matcher.replaceAll(sevenChars + characterArray[i]); 
+		}
+		
+		pattern = pattern.replace(sevenChars, ""); // remove the x'es
+
+		return pattern;
 	}
 
 	/******************************************************************************
@@ -1908,6 +2018,105 @@ public class XRRandom {
 
 		return object;
 	}
+	
+	/******************************************************************************
+	 * Randomizes the order of the elements in the list.
+	 * 
+	 * @param list the list to be randomized
+	 * 
+	 ******************************************************************************/
+	public static void randomizeOrder(List<?> list) { 
+		Collections.shuffle(list);
+	}
+	
+	/******************************************************************************
+	 * Randomizes the order of the elements in the array.
+	 * 
+	 * @param the array to be randomized
+	 * 
+	 ******************************************************************************/
+	public static <T> void randomizeOrder(T[] array) {
+	   
+		for (int i = array.length - 1; i > 0; i--) {
+			
+	        int j = ThreadLocalRandom.current().nextInt(i + 1);
 
+	        T temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
+	}
+	
+	/******************************************************************************
+	 * Randomizes the order of the elements in the array.
+	 * 
+	 * @param the array to be randomized
+	 * 
+	 ******************************************************************************/
+	public static void randomizeOrder(char[] array) {
+	   
+		for (int i = array.length - 1; i > 0; i--) {
+			
+	        int j = ThreadLocalRandom.current().nextInt(i + 1);
+
+	        char temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
+	}
+
+	/******************************************************************************
+	 * Randomizes the order of the elements in the array.
+	 * 
+	 * @param the array to be randomized
+	 * 
+	 ******************************************************************************/
+	public static void randomizeOrder(int[] array) {
+	   
+		for (int i = array.length - 1; i > 0; i--) {
+			
+	        int j = ThreadLocalRandom.current().nextInt(i + 1);
+
+	        int temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
+	}
+	
+	/******************************************************************************
+	 * Randomizes the order of the elements in the array.
+	 * 
+	 * @param the array to be randomized
+	 * 
+	 ******************************************************************************/
+	public static void randomizeOrder(long[] array) {
+	   
+		for (int i = array.length - 1; i > 0; i--) {
+			
+	        int j = ThreadLocalRandom.current().nextInt(i + 1);
+
+	        long temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
+	}
+	
+	/******************************************************************************
+	 * Randomizes the order of the elements in the array.
+	 * 
+	 * @param the array to be randomized
+	 * 
+	 ******************************************************************************/
+	public static void randomizeOrder(boolean[] array) {
+	   
+		for (int i = array.length - 1; i > 0; i--) {
+			
+	        int j = ThreadLocalRandom.current().nextInt(i + 1);
+
+	        boolean temp = array[i];
+	        array[i] = array[j];
+	        array[j] = temp;
+	    }
+	}
 	
 }

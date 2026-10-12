@@ -30,7 +30,37 @@ import com.xresch.xrutils.utils.XRTimeUnit;
 
 public class TestXRRandom {
 
+	/*****************************************************************
+	 * 
+	 *****************************************************************/
+	@Test
+	public void printPatternedOTPs() throws InterruptedException {
 		
+		//---------------------------------
+		// Numbers
+		for(int i = 0; i < 20; i++) {
+			System.out.println("OTP Numbers: " + XR.Random.patternedOTPNumbers(50) );
+		}
+		
+		//---------------------------------
+		// Alphas
+		for(int i = 0; i < 20; i++) {
+			System.out.println("OTP Alphas: " + XR.Random.patternedOTPAlphas(50) );
+		}
+		
+		//---------------------------------
+		// AlphaNums
+		for(int i = 0; i < 20; i++) {
+			System.out.println("OTP AlphaNums: " + XR.Random.patternedOTPAlphaNums(50) );
+		}
+		
+		//---------------------------------
+		// Mixed
+		for(int i = 0; i < 20; i++) {
+			System.out.println("OTP Mixed: " + XR.Random.patternedOTPMixed(50) );
+		}
+	}
+	
 	/*****************************************************************
 	 * 
 	 *****************************************************************/
