@@ -59,6 +59,27 @@ public class TestXRRandom {
 		for(int i = 0; i < 20; i++) {
 			System.out.println("OTP Mixed: " + XR.Random.patternedOTPMixed(50) );
 		}
+		
+		//---------------------------------
+		// Check duplicate chance
+		
+		int sumIterations = 0;
+		int loops = 100;
+		for(int j = 0; j < loops; j++) {
+			HashSet<String> otpSet = new HashSet<>();
+			for(int i = 0; i < 2000; i++) {
+				String otp = XR.Random.patternedOTPMixed(50);
+				if(otpSet.contains(otp)) {
+					System.out.println("Duplicate at iteration: " + i + " " + otp);
+					sumIterations += i;
+					break;
+				}
+				otpSet.add(otp);
+				
+			}
+		}
+		
+		System.out.println("Average iteration until duplicate: " + (sumIterations / loops) );
 	}
 	
 	/*****************************************************************
