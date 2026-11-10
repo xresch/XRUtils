@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1399,28 +1399,49 @@ public class XRRandom {
 	 * 
 	 ******************************************************************************/
 	public enum RandomDataType {
-		  DEFAULT 
-		, NUMBERS
-		, ARRAYS
-		, SERIES
-		, STATS
-		, TRADING
-		, TICKETS
-		, COUNTRIES
-		, BATCHJOBS
-		, RPG
-		, VARIOUS
-		;
+		  DEFAULT("Random person data including, ID, strings, url, boolean, number, index and time.") 
+		, NUMBERS("Various numbers useful to test different number formats.")
+		, ARRAYS("Arrays of numbers, characters, strings and mixed value types.")
+		, SERIES("Time series that can be used to test charts.")
+		, STATS("Time series for statistical values like count, min, avg, max, stdev, p90 etc... useful to test charts.")
+		, TRADING("Time series random trading data including open, high, low and close(OHLC) useful to test financial calculations and OHLC based charts.")
+		, TICKETS("Random support ticket data that can be useful to simulate a ticketing system.")
+		, COUNTRIES("Actual country data and useful as test data. The main random thing of this is that it made it somehow into this list of random types.")
+		, BATCHJOBS("Data that simulates batch job runs that can be useful to test gantt and boxplot charts.")
+		, RPGNAMES("Random names for RPG characters. Ended up here because the developer needed a way to generate fantasy names")
+		, VARIOUS("Data of various types for testing including boolean as string, nulls, color, fruit, status and graph data(x,y).")
+		; 
 		
-		private static HashSet<String> names = new HashSet<>();
+		private String description;
+		private static String optionsHTML;
+		
+		private static LinkedHashSet<String> names = new LinkedHashSet<>();
 		static {
+			
+			StringBuilder html = new StringBuilder("<ul>");
 			for(RandomDataType type : RandomDataType.values()) {
 				names.add(type.name());
+				html.append("<li><b>"+type.name().toLowerCase()+":&nbsp;</b>"+type.description+"</li>");
 			}
+			html.append("</ul>");
+			optionsHTML = html.toString();
+			
 		}
 
+		private RandomDataType(String description) {
+			this.description = description;
+		}
+		
 		public static boolean has(String value) {
 			return names.contains(value);
+		}
+		
+		public static LinkedHashSet<String> getNames() {
+			return new LinkedHashSet<>(names);
+		}
+		
+		public static String getOptionsHTML() {
+			return optionsHTML;
 		}
 	}
 	
@@ -1453,7 +1474,7 @@ public class XRRandom {
 			case TICKETS: 		return jsonArrayOfSupportTickets(count);
 			case COUNTRIES: 	return jsonArrayOfCountryData();
 			case BATCHJOBS:		return jsonArrayOfBatchCalls(seriesCount, count, earliest, latest, 7);
-			case RPG: 			return jsonArrayOfRPGCharacters(count);
+			case RPGNAMES: 			return jsonArrayOfRPGName(count);
 			case VARIOUS:		return jsonArrayOfVariousData(count, 0, earliest, latest);
 			
 			default: 			return  jsonArrayOfMightyPeople(count, 5, earliest, latest);
@@ -1958,8 +1979,8 @@ public class XRRandom {
 	/******************************************************************************
 	 * Creates a random RPG character.
 	 ******************************************************************************/
-	public static JsonObject jsonObjectOfRPGCharacter() {
-	    return INSTANCE.new RandomRPGCharacter()
+	public static JsonObject jsonObjectOfRPGName() {
+	    return INSTANCE.new RandomRPGName()
 	        .generateJsonObject();
 	}
 
@@ -1968,12 +1989,12 @@ public class XRRandom {
 	 *
 	 * @param count number of characters
 	 ******************************************************************************/
-	public static JsonArray jsonArrayOfRPGCharacters(int count) {
+	public static JsonArray jsonArrayOfRPGName(int count) {
 
 	    JsonArray array = new JsonArray();
 
 	    for (int i = 0; i < count; i++) {
-	        array.add(jsonObjectOfRPGCharacter());
+	        array.add(jsonObjectOfRPGName());
 	    }
 	    
 	    return array;
@@ -2299,7 +2320,7 @@ public class XRRandom {
 	 * @author Reto Scheiwiller
 	 * @license MIT
 	 ******************************************************************************/
-	public final class RandomRPGCharacter {
+	public final class RandomRPGName {
 	
 	    // =========================================================================
 	    // Male first name components
@@ -2447,15 +2468,15 @@ public class XRRandom {
 	    	    "van the Silverhand", "van the Red", "van der Storm", "van den Berg", "van the Hollow", "van the Ironwood", "van the Raven", "van the Wanderer", "van the Old Road", "van the Moonlit Vale", "von Drachenfels", "von Blackmoor", "von Winterhold", "von Ravencrest", "von Ashenford", "von Grimwald", "von Silberstein", "von Nachtwald", "von Falkenheim", "von Eisenberg", "von Morgenstern", "von Schattenburg", "von Goldhain", "von Wolfsheim", "von Dornheim", "von Sternberg", "von Dunkelwald", "von Sturmfels", "von Rotenburg", "von Hohenfels",
 	    	    "de la Rose", "de Winter", "de Veyra", "de Montfort", "de Valois", "de Ravenna", "de Bellmont", "de la Nuit", "de Silvermere", "de Ashbourne", "du Ciel", "du Sang", "du Corbeau", "du Val", "du Lac", "du Bois", "du Soleil", "du Crépuscule", "du Fer", "du Vent", "del Mar", "del Fuego", "del Norte", "del Alba", "del Bosque", "di Ravenna", "di Ferro", "di Luna", "di Vento", "di Sangue",
 	    	    "without a Shadow", "without a Name", "without a Kingdom", "without Mercy", "without Fear", "without Equal", "without a Past", "without a Master", "without a Cause", "without a Clue", "beyond the Grave", "beyond the Stars", "beyond Redemption", "beyond the Horizon", "beyond the Veil", "beyond All Reason", "beneath the Crown", "beneath the Waves", "beneath the Earth", "beneath the Moon", "above the Law", "above All Others", "against the Tide", "against All Odds", "among the Fallen", "among the Stars", "among the Dead", "among the Living", "between Two Worlds", "between the Shadows",
-	    	    "Keeper of Secrets", "Keeper of the Flame", "Bearer of Bad News", "Bearer of the Crown", "Warden of the North", "Warden of Lost Souls", "Master of the Hunt", "Mistress of Shadows", "Champion of the Weak", "Champion of Chaos", "Knight of the Broken Oath", "Knight of the Last Dawn", "Lord of Misrule", "Lady of the Lake", "Prince of Thieves", "Princess of Ashes", "Savior of None", "Slayer of Kings", "Friend of Beasts", "Enemy of Fate", "Voice of the Ancients", "Hand of the King", "Blade of the Realm", "Shield of the Innocent", "Scourge of the Wicked", "Bane of the Undead", "Hope of the Hopeless", "Terror of the Deep", "Wanderer of Worlds", "Seeker of Truth",
-	    	    "First of Their Name", "Last of Their Line", "Heir to Nothing", "Heir of the Ashen Throne", "Child of the Storm", "Child of Prophecy", "Son of Misfortune", "Daughter of the Dawn", "Born of Fire", "Forged in Shadow", "Raised by Wolves", "Marked by Fate", "Chosen by Nobody", "Favored by Fortune", "Cursed by Destiny", "Lost to Time", "Loved by None", "Feared by Many", "Known to Few", "Forgotten by All", "the Almost Famous", "the Mildly Dangerous", "the Reluctant Hero", "the Accidental Villain", "the Unpaid Mercenary", "the Last to Know", "the First to Flee", "the Master of Excuses", "the Surprisingly Competent", "the Professionally Unlucky"
+	    	    "Keeper of Secrets", "Keeper of the Flame", "Bearer of Bad News", "Bearer of the Crown", "Warden of the North", "Warden of Lost Souls", "Master of the Hunt", "Guardian of Shadows", "Champion of the Weak", "Champion of Chaos", "Knight of the Broken Oath", "Knight of the Last Dawn", "Harbinger of Misrule", "Guardian of the Lake", "Champion of Thieves", "Guardian of Ashes", "Savior of None", "Slayer of Kings", "Friend of Beasts", "Enemy of Fate", "Voice of the Ancients", "Hand of the Crown", "Blade of the Realm", "Shield of the Innocent", "Scourge of the Wicked", "Bane of the Undead", "Hope of the Hopeless", "Terror of the Deep", "Wanderer of Worlds", "Seeker of Truth",
+	    	    "First of Their Name", "Last of Their Line", "Heir to Nothing", "Heir of the Ashen Throne", "Child of the Storm", "Child of Prophecy", "Kin of Misfortune", "Kin of the Dawn", "Born of Fire", "Forged in Shadow", "Raised by Wolves", "Marked by Fate", "Chosen by Nobody", "Favored by Fortune", "Cursed by Destiny", "Lost to Time", "Loved by None", "Feared by Many", "Known to Few", "Forgotten by All", "the Almost Famous", "the Mildly Dangerous", "the Reluctant Hero", "the Accidental Villain", "the Unpaid Mercenary", "the Last to Know", "the First to Flee", "the Master of Excuses", "the Surprisingly Competent", "the Professionally Unlucky"
 	    	};
 	
 	    // =========================================================================
 	    // RPG Character record
 	    // =========================================================================
 	
-	    public record RPGCharacter(
+	    public record RPGName(
 	        String gender,
 	        String firstname,
 	        String middlename,
@@ -2493,13 +2514,13 @@ public class XRRandom {
 	    /*******************************************************************
 	     * Constructor
 	     *******************************************************************/
-	    public RandomRPGCharacter() {
+	    public RandomRPGName() {
 	    }
 	
 	    /*******************************************************************
 	     * 
 	     *******************************************************************/
-	    public RandomRPGCharacter middleNamePercent(int percent) {
+	    public RandomRPGName middleNamePercent(int percent) {
 	        this.middleNamePercent = percent;
 	        return this;
 	    }
@@ -2507,7 +2528,7 @@ public class XRRandom {
 	    /*******************************************************************
 	     * 
 	     *******************************************************************/
-	    public RandomRPGCharacter honorificPercent(int percent) {
+	    public RandomRPGName honorificPercent(int percent) {
 	        this.honorificPercent = percent;
 	        return this;
 	    }
@@ -2515,7 +2536,7 @@ public class XRRandom {
 	    /*******************************************************************
 	     * 
 	     *******************************************************************/
-	    public RandomRPGCharacter titlePercent(int percent) {
+	    public RandomRPGName titlePercent(int percent) {
 	        this.titlePercent = percent;
 	        return this;
 	    }
@@ -2585,7 +2606,7 @@ public class XRRandom {
 	    /*******************************************************************
 	     * Generate an RPG Character Record
 	     *******************************************************************/
-	    public RPGCharacter generateRecord() {
+	    public RPGName generateRecord() {
 	
 	        boolean isMale = XRRandom.integer(0, 1) == 0;
 	
@@ -2619,7 +2640,7 @@ public class XRRandom {
 	        appendPart(honoredFullname, honorific);
 	        appendPart(honoredFullname, fullname.toString());
 	        
-	        return new RPGCharacter(
+	        return new RPGName(
 	            gender,
 	            firstname,
 	            middlename,
